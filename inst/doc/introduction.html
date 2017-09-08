@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>Introduction to mschart</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to mschart</h1>
+
+
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(mschart)
+<span class="kw">library</span>(officer)
+<span class="kw">library</span>(magrittr)</code></pre></div>
+<p>Package <code>mschart</code> lets R users to create Microsoft Office charts from data, and then add title, legends, and annotations to the chart object.</p>
+<div id="available-charts" class="section level2">
+<h2>Available charts</h2>
+<p>Names of these high level functions are all prefixed with <code>ms_</code>. The following charts are the only available from all possible MS charts:</p>
+<ul>
+<li>barcharts: <code>ms_barchart()</code></li>
+<li>linecharts: <code>ms_linechart()</code></li>
+<li>scatter plots: <code>ms_scatterchart()</code></li>
+<li>areacharts: <code>ms_areachart()</code></li>
+</ul>
+<p><em>More chart types will be made available in future versions.</em></p>
+</div>
+<div id="quick-start" class="section level2">
+<h2>Quick start</h2>
+<div id="call-an-high-level-function" class="section level3">
+<h3>Call an high level function</h3>
+<p>We need to call an high level function (one of those starting with <code>ms_</code>). These functions accept the following arguments:</p>
+<ul>
+<li><code>data</code>: the data.frame to be plotted</li>
+<li><code>x</code>, <code>y</code></li>
+<li>eventually <code>group</code>: colnames for x and y axis and a grouping column</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart &lt;-<span class="st"> </span><span class="kw">ms_barchart</span>(<span class="dt">data =</span> browser_data, 
+  <span class="dt">x =</span> <span class="st">&quot;browser&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;value&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;serie&quot;</span>)</code></pre></div>
+</div>
+<div id="write-charts-in-microsoft-documents" class="section level3">
+<h3>Write charts in Microsoft documents</h3>
+<p>Let’s have a look at the result by sending it to a new PowerPoint presentation:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(officer)
+doc &lt;-<span class="st"> </span><span class="kw">read_pptx</span>()
+doc &lt;-<span class="st"> </span><span class="kw">add_slide</span>(doc, <span class="dt">layout =</span> <span class="st">&quot;Title and Content&quot;</span>, <span class="dt">master =</span> <span class="st">&quot;Office Theme&quot;</span>)
+doc &lt;-<span class="st"> </span><span class="kw">ph_with_chart</span>(doc, <span class="dt">chart =</span> my_barchart)
+<span class="kw">print</span>(doc, <span class="dt">target =</span> <span class="st">&quot;assets/pptx/barchart_01_stacked.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/barchart_01_stacked.pptx">barchart_01_stacked.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/barchart_01_stacked.pptx">office web viewer</a>
+</p>
+<p>Or in a new Word document:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">doc &lt;-<span class="st"> </span><span class="kw">read_docx</span>()
+doc &lt;-<span class="st"> </span><span class="kw">body_add_chart</span>(doc, <span class="dt">chart =</span> my_barchart, <span class="dt">style =</span> <span class="st">&quot;centered&quot;</span>)
+<span class="kw">print</span>(doc, <span class="dt">target =</span> <span class="st">&quot;assets/docx/barchart_01_stacked.docx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/docx/barchart_01_stacked.docx">barchart_01_stacked.docx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/docx/barchart_01_stacked.docx">office web viewer</a>
+</p>
+</div>
+</div>
+<div id="customise-charts" class="section level2">
+<h2>Customise charts</h2>
+<p>Charts are generated with default values. Options are available to change charts properties.</p>
+<ul>
+<li>Global chart settings can be specified with generic function <code>chart_settings</code>. Each type of chart has its own set of parameters. The following <em>stack</em> the bars for each group.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_settings</span>( my_barchart, <span class="dt">grouping =</span> <span class="st">&quot;stacked&quot;</span>, <span class="dt">gap_width =</span> <span class="dv">50</span>, <span class="dt">overlap =</span> <span class="dv">100</span> )</code></pre></div>
+<ul>
+<li>Axis properties are available with functions <code>chart_ax_x</code> and <code>chart_ax_y</code>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_ax_x</span>(my_barchart, <span class="dt">cross_between =</span> <span class="st">'between'</span>, 
+  <span class="dt">major_tick_mark =</span> <span class="st">&quot;in&quot;</span>, <span class="dt">minor_tick_mark =</span> <span class="st">&quot;none&quot;</span>)
+my_barchart &lt;-<span class="st"> </span><span class="kw">chart_ax_y</span>(my_barchart, <span class="dt">num_fmt =</span> <span class="st">&quot;0.00&quot;</span>, <span class="dt">rotation =</span> <span class="op">-</span><span class="dv">90</span>)</code></pre></div>
+<ul>
+<li>Titles (main title, axis labels) can be set with function <code>chart_labels</code>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_labels</span>(my_barchart, <span class="dt">title =</span> <span class="st">&quot;A main title&quot;</span>, 
+  <span class="dt">xlab =</span> <span class="st">&quot;x axis title&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;y axis title&quot;</span>)</code></pre></div>
+<ul>
+<li>Series visual settings can be customised with functions <code>chart_data_fill</code>, <code>chart_data_stroke</code>, <code>chart_data_size</code> and <code>chart_data_symbol</code>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_data_fill</span>(my_barchart,
+  <span class="dt">values =</span> <span class="kw">c</span>(<span class="dt">serie1 =</span> <span class="st">&quot;#003C63&quot;</span>, <span class="dt">serie2 =</span> <span class="st">&quot;#ED1F24&quot;</span>, <span class="dt">serie3 =</span> <span class="st">&quot;#F2AA00&quot;</span>) )
+my_barchart &lt;-<span class="st"> </span><span class="kw">chart_data_stroke</span>(my_barchart, <span class="dt">values =</span> <span class="st">&quot;transparent&quot;</span> )</code></pre></div>
+<ul>
+<li>Global visual settings (e.g. groups fill and stroke colours) can be customised with functions <code>set_theme</code>:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">title_style &lt;-<span class="st"> </span><span class="kw">fp_text</span>(<span class="dt">color =</span> <span class="st">&quot;#175FAA&quot;</span>, <span class="dt">font.size =</span> <span class="dv">14</span>, <span class="dt">bold =</span> <span class="ot">TRUE</span>)
+mytheme &lt;-<span class="st"> </span><span class="kw">mschart_theme</span>(<span class="dt">main_title =</span> <span class="kw">update</span>( title_style, <span class="dt">font.size =</span> <span class="dv">18</span>),
+  <span class="dt">axis_title_x =</span> title_style, <span class="dt">axis_title_y =</span> title_style,
+  <span class="dt">grid_major_line_y =</span> <span class="kw">fp_border</span>(<span class="dt">width =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="st">&quot;orange&quot;</span>),
+  <span class="dt">axis_ticks_y =</span> <span class="kw">fp_border</span>(<span class="dt">width =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="st">&quot;orange&quot;</span>) )
+my_barchart &lt;-<span class="st"> </span><span class="kw">set_theme</span>(my_barchart, mytheme)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(officer)
+doc &lt;-<span class="st"> </span><span class="kw">read_pptx</span>()
+doc &lt;-<span class="st"> </span><span class="kw">add_slide</span>(doc, <span class="dt">layout =</span> <span class="st">&quot;Title and Content&quot;</span>, <span class="dt">master =</span> <span class="st">&quot;Office Theme&quot;</span>)
+doc &lt;-<span class="st"> </span><span class="kw">ph_with_chart</span>(doc, <span class="dt">chart =</span> my_barchart)
+<span class="kw">print</span>(doc, <span class="dt">target =</span> <span class="st">&quot;assets/pptx/barchart_02_stacked.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/barchart_02_stacked.pptx">barchart_02_stacked.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/barchart_02_stacked.pptx">office web viewer</a>
+</p>
+</div>
+<div id="gallery" class="section level2">
+<h2>Gallery</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gen_pptx &lt;-<span class="st"> </span><span class="cf">function</span>( chart, file ){
+  doc &lt;-<span class="st"> </span><span class="kw">read_pptx</span>()
+  doc &lt;-<span class="st"> </span><span class="kw">add_slide</span>(doc, <span class="dt">layout =</span> <span class="st">&quot;Title and Content&quot;</span>, <span class="dt">master =</span> <span class="st">&quot;Office Theme&quot;</span>)
+  doc &lt;-<span class="st"> </span><span class="kw">ph_with_chart</span>(doc, <span class="dt">chart =</span> chart)
+  <span class="kw">print</span>(doc, <span class="dt">target =</span> file)
+  <span class="kw">office_doc_link</span>( <span class="dt">url =</span> <span class="kw">paste0</span>( <span class="st">&quot;https://ardata-fr.github.io/mschart/articles/&quot;</span>, file ) )
+}</code></pre></div>
+<div id="bar-charts" class="section level3">
+<h3>Bar charts</h3>
+<div id="grouped-bars" class="section level4">
+<h4>grouped bars</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart_<span class="dv">01</span> &lt;-<span class="st"> </span><span class="kw">ms_barchart</span>(
+  <span class="dt">data =</span> browser_data, <span class="dt">x =</span> <span class="st">&quot;browser&quot;</span>,
+  <span class="dt">y =</span> <span class="st">&quot;value&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;serie&quot;</span>
+)
+<span class="kw">gen_pptx</span>(my_barchart_<span class="dv">01</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_bar_01.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_01.pptx">gallery_bar_01.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_01.pptx">office web viewer</a>
+</p>
+</div>
+<div id="vertical-stacked-bars" class="section level4">
+<h4>vertical stacked bars</h4>
+<p><code>as_bar_stack</code> is an helper function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">as_bar_stack</span>(my_barchart_<span class="dv">01</span>)
+<span class="kw">gen_pptx</span>(my_barchart_<span class="dv">02</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_bar_02.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_02.pptx">gallery_bar_02.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_02.pptx">office web viewer</a>
+</p>
+</div>
+<div id="horizontal-stacked-bars" class="section level4">
+<h4>horizontal stacked bars</h4>
+<ul>
+<li>Values</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart_<span class="dv">03</span> &lt;-<span class="st"> </span><span class="kw">as_bar_stack</span>(my_barchart_<span class="dv">01</span>, <span class="dt">dir =</span> <span class="st">&quot;horizontal&quot;</span>)
+<span class="kw">gen_pptx</span>(my_barchart_<span class="dv">03</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_bar_03.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_03.pptx">gallery_bar_03.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_03.pptx">office web viewer</a>
+</p>
+<ul>
+<li>Percent</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_barchart_<span class="dv">04</span> &lt;-<span class="st"> </span><span class="kw">as_bar_stack</span>(my_barchart_<span class="dv">01</span>, <span class="dt">dir =</span> <span class="st">&quot;horizontal&quot;</span>, 
+  <span class="dt">percent =</span> <span class="ot">TRUE</span>)
+<span class="kw">gen_pptx</span>(my_barchart_<span class="dv">04</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_bar_04.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_04.pptx">gallery_bar_04.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_bar_04.pptx">office web viewer</a>
+</p>
+</div>
+</div>
+<div id="line-charts" class="section level3">
+<h3>Line charts</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">structure</span>(
+  <span class="kw">list</span>(
+    <span class="dt">supp =</span> <span class="kw">structure</span>( <span class="kw">c</span>(1L, 1L, 1L, 2L, 2L, 2L), 
+                      <span class="dt">.Label =</span> <span class="kw">c</span>(<span class="st">&quot;OJ&quot;</span>, <span class="st">&quot;VC&quot;</span>), <span class="dt">class =</span> <span class="st">&quot;factor&quot;</span> ),
+    <span class="dt">dose =</span> <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>),
+    <span class="dt">length =</span> <span class="kw">c</span>(<span class="fl">13.23</span>, <span class="fl">22.7</span>, <span class="fl">26.06</span>, <span class="fl">7.98</span>, <span class="fl">16.77</span>, <span class="fl">26.14</span>)
+  ),
+  <span class="dt">.Names =</span> <span class="kw">c</span>(<span class="st">&quot;supp&quot;</span>, <span class="st">&quot;dose&quot;</span>, <span class="st">&quot;length&quot;</span>),
+  <span class="dt">class =</span> <span class="st">&quot;data.frame&quot;</span>, <span class="dt">row.names =</span> <span class="kw">c</span>(<span class="ot">NA</span>,<span class="op">-</span>6L)
+)
+
+lc_<span class="dv">01</span> &lt;-<span class="st"> </span><span class="kw">ms_linechart</span>(<span class="dt">data =</span> data, <span class="dt">x =</span> <span class="st">&quot;dose&quot;</span>,
+                      <span class="dt">y =</span> <span class="st">&quot;length&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;supp&quot;</span>)
+<span class="kw">gen_pptx</span>(lc_<span class="dv">01</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_line_01.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_line_01.pptx">gallery_line_01.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_line_01.pptx">office web viewer</a>
+</p>
+<div id="with-dates" class="section level4">
+<h4>With dates</h4>
+<p>Auto detection of dates is not yet implemented, sorry. You will need to specify the <code>num_fmt</code> argument.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lc_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">ms_linechart</span>(<span class="dt">data =</span> browser_ts, <span class="dt">x =</span> <span class="st">&quot;date&quot;</span>,
+                      <span class="dt">y =</span> <span class="st">&quot;freq&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;browser&quot;</span>)
+lc_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">chart_ax_x</span>(lc_<span class="dv">02</span>, <span class="dt">num_fmt =</span> <span class="st">&quot;m/d/yy&quot;</span>)
+<span class="kw">gen_pptx</span>(lc_<span class="dv">02</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_line_02.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_line_02.pptx">gallery_line_02.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_line_02.pptx">office web viewer</a>
+</p>
+</div>
+<div id="stacked" class="section level4">
+<h4>Stacked</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lc_<span class="dv">03</span> &lt;-<span class="st"> </span><span class="kw">chart_settings</span>(lc_<span class="dv">02</span>, <span class="dt">grouping =</span> <span class="st">&quot;percentStacked&quot;</span>)
+<span class="kw">gen_pptx</span>(lc_<span class="dv">03</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_line_03.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_line_03.pptx">gallery_line_03.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_line_03.pptx">office web viewer</a>
+</p>
+</div>
+</div>
+</div>
+<div id="area-chats" class="section level2">
+<h2>Area chats</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ac_<span class="dv">01</span> &lt;-<span class="st"> </span><span class="kw">ms_areachart</span>(<span class="dt">data =</span> data, <span class="dt">x =</span> <span class="st">&quot;dose&quot;</span>,
+                      <span class="dt">y =</span> <span class="st">&quot;length&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;supp&quot;</span>)
+<span class="kw">gen_pptx</span>(ac_<span class="dv">01</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_area_01.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_area_01.pptx">gallery_area_01.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_area_01.pptx">office web viewer</a>
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ac_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">ms_areachart</span>(<span class="dt">data =</span> browser_ts, <span class="dt">x =</span> <span class="st">&quot;date&quot;</span>,
+                      <span class="dt">y =</span> <span class="st">&quot;freq&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;browser&quot;</span>)
+ac_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">chart_ax_y</span>(ac_<span class="dv">02</span>, <span class="dt">cross_between =</span> <span class="st">&quot;between&quot;</span>, <span class="dt">num_fmt =</span> <span class="st">&quot;General&quot;</span>)
+ac_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">chart_ax_x</span>(ac_<span class="dv">02</span>, <span class="dt">cross_between =</span> <span class="st">&quot;midCat&quot;</span>, <span class="dt">num_fmt =</span> <span class="st">&quot;m/d/yy&quot;</span>)
+<span class="kw">gen_pptx</span>(ac_<span class="dv">02</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_area_02.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_area_02.pptx">gallery_area_02.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_area_02.pptx">office web viewer</a>
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ac_<span class="dv">03</span> &lt;-<span class="st"> </span><span class="kw">chart_settings</span>(ac_<span class="dv">02</span>, <span class="dt">grouping =</span> <span class="st">&quot;percentStacked&quot;</span>)
+<span class="kw">gen_pptx</span>(ac_<span class="dv">03</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_area_03.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_area_03.pptx">gallery_area_03.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_area_03.pptx">office web viewer</a>
+</p>
+</div>
+<div id="scatter-plots" class="section level2">
+<h2>Scatter plots</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sc_<span class="dv">01</span> &lt;-<span class="st"> </span><span class="kw">ms_scatterchart</span>(<span class="dt">data =</span> mtcars, <span class="dt">x =</span> <span class="st">&quot;disp&quot;</span>,
+                         <span class="dt">y =</span> <span class="st">&quot;drat&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;gear&quot;</span>)
+<span class="kw">gen_pptx</span>(sc_<span class="dv">01</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_scatter_01.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_scatter_01.pptx">gallery_scatter_01.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_scatter_01.pptx">office web viewer</a>
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sc_<span class="dv">02</span> &lt;-<span class="st"> </span><span class="kw">ms_scatterchart</span>(<span class="dt">data =</span> mtcars, <span class="dt">x =</span> <span class="st">&quot;disp&quot;</span>,
+                         <span class="dt">y =</span> <span class="st">&quot;drat&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;gear&quot;</span>)
+<span class="kw">gen_pptx</span>(sc_<span class="dv">02</span>, <span class="dt">file =</span> <span class="st">&quot;assets/pptx/gallery_scatter_02.pptx&quot;</span>)</code></pre></div>
+<p style="text-align:center;font-style:italic;color:gray;">
+<span>Download file </span>
+<a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_scatter_02.pptx">gallery_scatter_02.pptx</a>
+<span> - view with</span>
+<a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/gallery_scatter_02.pptx">office web viewer</a>
+</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
