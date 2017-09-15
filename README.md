@@ -50,9 +50,3 @@ Note
 ----
 
 The project is in development, there will be more graphics later.
-
-Plans
------
-
--   enable output to existing MS Excel file
--   add helper functions
