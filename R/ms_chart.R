@@ -51,11 +51,14 @@ ms_chart <- function(data, x, y, group = NULL){
 
   series_symbols <- rep("circle", length(series_names) )
   series_size <- rep(12, length(series_names) )
-  out$series_settings <- list( fill = setNames(palette_, series_names),
-        colour = setNames(palette_, series_names),
-        symbol = setNames(series_symbols, series_names),
-        size = setNames(series_size, series_names)
-        )
+  series_lwidth <- rep(2, length(series_names) )
+  out$series_settings <- list(
+    fill = setNames(palette_, series_names),
+    colour = setNames(palette_, series_names),
+    symbol = setNames(series_symbols, series_names),
+    size = setNames(series_size, series_names),
+    line_width = setNames(series_lwidth, series_names)
+    )
   out
 }
 
@@ -108,9 +111,9 @@ colour_list <- list(
 )
 
 
-#' @importFrom xml2 xml_attr<-
-format.ms_chart  <- function(x, id_x, id_y){
-  str_ <- ooml_code(x, id_x = id_x, id_y = id_y)
+#' @importFrom xml2 xml_attr<- xml_remove
+format.ms_chart  <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data = FALSE){
+  str_ <- ooml_code(x, id_x = id_x, id_y = id_y, sheetname = sheetname)
 
 
   if( is.null(x$x_axis$num_fmt) )
@@ -133,8 +136,24 @@ format.ms_chart  <- function(x, id_x, id_y){
     title_ <- sprintf(title_, ns, format(x$theme[["main_title"]], type = "pml" ), x$labels[["title"]] )
     xml_add_child( chartnode, as_xml_document(title_), .where	= 0 )
   }
-  legend_pos <- xml_find_first(xml_doc, "//c:chart/c:legend/c:legendPos")
-  xml_attr( legend_pos, "val" ) <- x$theme[["legend_position"]]
+
+  if( x$theme[["legend_position"]] %in% "n" ){
+    legend_pos <- xml_find_first(xml_doc, "//c:chart/c:legend")
+    xml_remove(legend_pos)
+  } else {
+    legend_pos <- xml_find_first(xml_doc, "//c:chart/c:legend/c:legendPos")
+    xml_attr( legend_pos, "val" ) <- x$theme[["legend_position"]]
+
+    rpr <- format(x$theme[["legend_text"]], type = "pml" )
+    rpr <- gsub("a:rPr", "a:defRPr", rpr)
+    labels_text_pr <- "<c:txPr xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><a:bodyPr/><a:lstStyle/><a:p><a:pPr>%s</a:pPr></a:p></c:txPr>"
+    labels_text_pr <- sprintf(labels_text_pr, rpr )
+    legend_ <- xml_find_first(xml_doc, "//c:chart/c:legend")
+    xml_add_child(legend_, as_xml_document(labels_text_pr) )
+  }
+  if(drop_ext_data){
+    xml_remove(xml_find_first(xml_doc, "//c:externalData"))
+  }
 
   as.character(xml_doc)
 }
@@ -242,9 +261,9 @@ ms_scatterchart <- function(data, x, y, group = NULL){
 #' mylc <- chart_labels(mylc, title = "my title", xlab = "my x label",
 #'   ylab = "my y label")
 chart_labels <- function( x, title = NULL, xlab = NULL, ylab = NULL){
-  if( !is.null(title) ) x$labels[["title"]] <- title
-  if( !is.null(xlab) ) x$labels[["x"]] <- xlab
-  if( !is.null(ylab) ) x$labels[["y"]] <- ylab
+  if( !is.null(title) ) x$labels[["title"]] <- htmlEscape(title)
+  if( !is.null(xlab) ) x$labels[["x"]] <- htmlEscape(xlab)
+  if( !is.null(ylab) ) x$labels[["y"]] <- htmlEscape(ylab)
   x
 }
 

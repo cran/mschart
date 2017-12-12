@@ -1,10 +1,12 @@
 #' @importFrom stats as.formula
 #' @importFrom data.table as.data.table dcast.data.table setorderv
+#' @importFrom htmltools htmlEscape
 shape_as_series <- function(x){
   dataset <- as.data.table(x$data)
   dataset <- setorderv(dataset, c(x$x, x$group) )
 
   if( !is.null(x$group)){
+    dataset[[x$group]] <- htmlEscape(dataset[[x$group]])
     form_str <- sprintf("%s ~ %s", x$x, x$group)
     dataset <- dcast.data.table(dataset, formula = as.formula(form_str),
                                 fun.aggregate = function(x) {x},
@@ -30,6 +32,19 @@ fmt_name <- function( x ){
   else stop("unknow type of data")
 
   x
+}
+
+serie_builtin_class <- function( x ){
+
+  if( inherits(x, "Date") )
+    str_ref
+  else if( is.factor(x) || is.character(x) )
+    str_ref
+  else if( is.integer(x) )
+    num_ref
+  else if( is.double(x) )
+    num_ref
+  else stop("unknow type of data")
 }
 
 is_valid_color = function(x) {

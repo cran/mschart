@@ -12,7 +12,7 @@ r6_names <- xml_attr( elts, "name" ) %>% str_to_lower()
 
 str <- "%s <- c(%s)\n"
 
-choices <- map_chr( elts, function(x) {
+choices <- sapply( elts, function(x) {
   values <- xml_attr( xml_children(xml_child(x, "xsd:restriction")), "value")
   paste0(shQuote(values), collapse = ", ")
 })
