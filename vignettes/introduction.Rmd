@@ -2,7 +2,7 @@
 title: "Introduction to mschart"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction}
+  %\VignetteIndexEntry{Introduction to mschart}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -77,7 +77,7 @@ Or in a new Word document:
 
 ```{r results='hide'}
 doc <- read_docx()
-doc <- body_add_chart(doc, chart = my_barchart, style = "centered")
+doc <- body_add_chart(doc, chart = my_barchart, style = "Normal")
 print(doc, target = "assets/docx/barchart_01_stacked.docx")
 ```
 
@@ -112,8 +112,9 @@ my_barchart <- chart_labels(my_barchart, title = "A main title",
   xlab = "x axis title", ylab = "y axis title")
 ```
 
-* Series visual settings can be customised with functions `chart_data_fill()`, `chart_data_stroke()`, `chart_data_size()`, `chart_data_symbol()` and 
-`chart_data_line_width()`:
+* Series visual settings can be customised with functions `chart_data_fill()`,
+`chart_data_stroke()`, `chart_data_size()`, `chart_data_symbol()`,  
+`chart_data_line_width()` and `chart_labels_text()`:
 
 ```{r}
 my_barchart <- chart_data_fill(my_barchart,

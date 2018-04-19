@@ -2,7 +2,7 @@ Package: mschart
 Type: Package
 Title: Chart Generation for 'Microsoft Word' and 'Microsoft PowerPoint'
         Documents
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: c( person("David", "Gohel", role = c("aut", "cre"), email = "david.gohel@ardata.fr"), person("YouGov", role = "fnd") )
 Description: Create native charts for 'Microsoft PowerPoint' and 'Microsoft Word' documents. 
  These can then be edited and annotated. Functions are provided to let users create charts, modify 
@@ -21,9 +21,9 @@ RoxygenNote: 6.0.1.9000
 Suggests: knitr, rmarkdown,magrittr
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2017-12-12 11:27:59 UTC; davidgohel
+Packaged: 2018-04-19 12:38:32 UTC; davidgohel
 Author: David Gohel [aut, cre],
   YouGov [fnd]
 Maintainer: David Gohel <david.gohel@ardata.fr>
 Repository: CRAN
-Date/Publication: 2017-12-12 12:05:57 UTC
+Date/Publication: 2018-04-19 23:13:16 UTC

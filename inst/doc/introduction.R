@@ -34,7 +34,7 @@ office_doc_link( url = paste0( "https://ardata-fr.github.io/mschart/articles/", 
 
 ## ----results='hide'------------------------------------------------------
 doc <- read_docx()
-doc <- body_add_chart(doc, chart = my_barchart, style = "centered")
+doc <- body_add_chart(doc, chart = my_barchart, style = "Normal")
 print(doc, target = "assets/docx/barchart_01_stacked.docx")
 
 ## ----echo=FALSE----------------------------------------------------------
