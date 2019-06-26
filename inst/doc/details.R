@@ -30,7 +30,7 @@ library(magrittr)
 gen_pptx <- function( chart, file ){
   doc <- read_pptx()
   doc <- add_slide(doc, layout = "Title and Content", master = "Office Theme")
-  doc <- ph_with_chart(doc, chart = chart)
+  doc <- ph_with(doc, value = chart, location = ph_location_type(type = "body"))
   print(doc, target = file)
   office_doc_link( url = paste0( "https://ardata-fr.github.io/mschart/articles/", file ) )
 }
@@ -80,6 +80,13 @@ gen_pptx(lc_02, file = "assets/pptx/gallery_line_02.pptx")
 ## ------------------------------------------------------------------------
 lc_03 <- chart_settings(lc_02, grouping = "percentStacked")
 gen_pptx(lc_03, file = "assets/pptx/gallery_line_03.pptx")
+
+## ------------------------------------------------------------------------
+linec <- ms_linechart(data = iris, x = "Sepal.Length",
+                      y = "Sepal.Width", group = "Species")
+linec_smooth <- chart_data_smooth(linec,
+                values = c(virginica = 1, versicolor = 0, setosa = 0) )
+gen_pptx(linec_smooth, file = "assets/pptx/gallery_line_04.pptx")
 
 ## ------------------------------------------------------------------------
 ac_01 <- ms_areachart(data = data, x = "dose",

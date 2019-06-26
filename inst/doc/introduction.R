@@ -26,7 +26,7 @@ my_barchart <- ms_barchart(data = browser_data,
 library(officer)
 doc <- read_pptx()
 doc <- add_slide(doc, layout = "Title and Content", master = "Office Theme")
-doc <- ph_with_chart(doc, chart = my_barchart)
+doc <- ph_with(doc, value = my_barchart, location = ph_location_fullsize())
 print(doc, target = "assets/pptx/barchart_01_stacked.pptx")
 
 ## ----echo=FALSE----------------------------------------------------------

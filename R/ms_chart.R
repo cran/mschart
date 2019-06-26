@@ -53,13 +53,15 @@ ms_chart <- function(data, x, y, group = NULL){
   series_size <- rep(12, length(series_names) )
   series_lwidth <- rep(2, length(series_names) )
   labels_fp <- rep(list(fp_text(font.size = 0)), length(series_names) )
+  series_smooth <- rep(1,length(series_names))
   out$series_settings <- list(
     fill = setNames(palette_, series_names),
     colour = setNames(palette_, series_names),
     symbol = setNames(series_symbols, series_names),
     size = setNames(series_size, series_names),
     line_width = setNames(series_lwidth, series_names),
-    labels_fp = setNames(labels_fp, series_names)
+    labels_fp = setNames(labels_fp, series_names),
+    smooth = setNames(series_smooth, series_names)
     )
   out
 }
@@ -137,6 +139,9 @@ format.ms_chart  <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data 
     title_ <- "<c:title %s><c:tx><c:rich><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr/></a:pPr><a:r>%s<a:t>%s</a:t></a:r></a:p></c:rich></c:tx><c:layout/><c:overlay val=\"0\"/></c:title>"
     title_ <- sprintf(title_, ns, format(x$theme[["main_title"]], type = "pml" ), x$labels[["title"]] )
     xml_add_child( chartnode, as_xml_document(title_), .where	= 0 )
+  } else { # null is not enough
+    atd_node <- xml_find_first(xml_doc, "//c:chart/c:autoTitleDeleted")
+    xml_attr(atd_node, "val") <- "1"
   }
 
   if( x$theme[["legend_position"]] %in% "n" ){
@@ -264,8 +269,12 @@ ms_scatterchart <- function(data, x, y, group = NULL){
 #'   ylab = "my y label")
 chart_labels <- function( x, title = NULL, xlab = NULL, ylab = NULL){
   if( !is.null(title) ) x$labels[["title"]] <- htmlEscape(title)
+  else x$labels[["title"]] <- NULL
+
   if( !is.null(xlab) ) x$labels[["x"]] <- htmlEscape(xlab)
+  else x$labels[["x"]] <- NULL
+
   if( !is.null(ylab) ) x$labels[["y"]] <- htmlEscape(ylab)
+  else x$labels[["y"]] <- NULL
   x
 }
-

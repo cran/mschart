@@ -17,10 +17,10 @@
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -33,13 +33,11 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
+  { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -81,7 +79,29 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -269,6 +289,9 @@ code > span.al { color: #ff0000; font-weight: bold; }
 code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
+
+
+
 </head>
 
 <body>
@@ -280,9 +303,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(mschart)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(officer)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(magrittr)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(mschart)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(officer)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(magrittr)</a></code></pre></div>
 <p>Package <code>mschart</code> lets R users to create Microsoft Office charts from data, and then add title, legends, and annotations to the chart object.</p>
 <div id="available-charts" class="section level2">
 <h2>Available charts</h2>
@@ -304,17 +327,17 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li><code>x</code>, <code>y</code></li>
 <li>eventually <code>group</code>: colnames for x and y axis and a grouping column</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">my_barchart &lt;-<span class="st"> </span><span class="kw">ms_barchart</span>(<span class="dt">data =</span> browser_data, </a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">  <span class="dt">x =</span> <span class="st">&quot;browser&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;value&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;serie&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">my_barchart &lt;-<span class="st"> </span><span class="kw">ms_barchart</span>(<span class="dt">data =</span> browser_data, </a>
+<a class="sourceLine" id="cb2-2" title="2">  <span class="dt">x =</span> <span class="st">&quot;browser&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;value&quot;</span>, <span class="dt">group =</span> <span class="st">&quot;serie&quot;</span>)</a></code></pre></div>
 </div>
 <div id="write-charts-in-microsoft-documents" class="section level3">
 <h3>Write charts in Microsoft documents</h3>
 <p>Let’s have a look at the result by sending it to a new PowerPoint presentation:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(officer)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">doc &lt;-<span class="st"> </span><span class="kw">read_pptx</span>()</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">doc &lt;-<span class="st"> </span><span class="kw">add_slide</span>(doc, <span class="dt">layout =</span> <span class="st">&quot;Title and Content&quot;</span>, <span class="dt">master =</span> <span class="st">&quot;Office Theme&quot;</span>)</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">doc &lt;-<span class="st"> </span><span class="kw">ph_with_chart</span>(doc, <span class="dt">chart =</span> my_barchart)</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="kw">print</span>(doc, <span class="dt">target =</span> <span class="st">&quot;assets/pptx/barchart_01_stacked.pptx&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">library</span>(officer)</a>
+<a class="sourceLine" id="cb3-2" title="2">doc &lt;-<span class="st"> </span><span class="kw">read_pptx</span>()</a>
+<a class="sourceLine" id="cb3-3" title="3">doc &lt;-<span class="st"> </span><span class="kw">add_slide</span>(doc, <span class="dt">layout =</span> <span class="st">&quot;Title and Content&quot;</span>, <span class="dt">master =</span> <span class="st">&quot;Office Theme&quot;</span>)</a>
+<a class="sourceLine" id="cb3-4" title="4">doc &lt;-<span class="st"> </span><span class="kw">ph_with</span>(doc, <span class="dt">value =</span> my_barchart, <span class="dt">location =</span> <span class="kw">ph_location_fullsize</span>())</a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="kw">print</span>(doc, <span class="dt">target =</span> <span class="st">&quot;assets/pptx/barchart_01_stacked.pptx&quot;</span>)</a></code></pre></div>
 <p style="text-align:center;font-style:italic;color:gray;">
 <span>Download file </span>
 <a href="https://ardata-fr.github.io/mschart/articles/assets/pptx/barchart_01_stacked.pptx">barchart_01_stacked.pptx</a>
@@ -322,9 +345,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a target="_blank" href="https://view.officeapps.live.com/op/view.aspx?src=https://ardata-fr.github.io/mschart/articles/assets/pptx/barchart_01_stacked.pptx">office web viewer</a>
 </p>
 <p>Or in a new Word document:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">doc &lt;-<span class="st"> </span><span class="kw">read_docx</span>()</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">doc &lt;-<span class="st"> </span><span class="kw">body_add_chart</span>(doc, <span class="dt">chart =</span> my_barchart, <span class="dt">style =</span> <span class="st">&quot;Normal&quot;</span>)</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw">print</span>(doc, <span class="dt">target =</span> <span class="st">&quot;assets/docx/barchart_01_stacked.docx&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">doc &lt;-<span class="st"> </span><span class="kw">read_docx</span>()</a>
+<a class="sourceLine" id="cb4-2" title="2">doc &lt;-<span class="st"> </span><span class="kw">body_add_chart</span>(doc, <span class="dt">chart =</span> my_barchart, <span class="dt">style =</span> <span class="st">&quot;Normal&quot;</span>)</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="kw">print</span>(doc, <span class="dt">target =</span> <span class="st">&quot;assets/docx/barchart_01_stacked.docx&quot;</span>)</a></code></pre></div>
 <p style="text-align:center;font-style:italic;color:gray;">
 <span>Download file </span>
 <a href="https://ardata-fr.github.io/mschart/articles/assets/docx/barchart_01_stacked.docx">barchart_01_stacked.docx</a>
@@ -340,25 +363,25 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li>Global chart settings can be specified with generic function <code>chart_settings()</code>. Each type of chart has its own set of parameters. See vignette <a href="details.html">details</a>.</li>
 </ul>
 <p>The following <em>stack</em> the bars for each group.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_settings</span>( my_barchart, <span class="dt">grouping =</span> <span class="st">&quot;stacked&quot;</span>, <span class="dt">gap_width =</span> <span class="dv">50</span>, <span class="dt">overlap =</span> <span class="dv">100</span> )</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_settings</span>( my_barchart, <span class="dt">grouping =</span> <span class="st">&quot;stacked&quot;</span>, <span class="dt">gap_width =</span> <span class="dv">50</span>, <span class="dt">overlap =</span> <span class="dv">100</span> )</a></code></pre></div>
 <ul>
 <li>Axis properties are available with functions <code>chart_ax_x()</code> and <code>chart_ax_y()</code>:</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_ax_x</span>(my_barchart, <span class="dt">cross_between =</span> <span class="st">'between'</span>, </a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">  <span class="dt">major_tick_mark =</span> <span class="st">&quot;in&quot;</span>, <span class="dt">minor_tick_mark =</span> <span class="st">&quot;none&quot;</span>)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_ax_y</span>(my_barchart, <span class="dt">num_fmt =</span> <span class="st">&quot;0.00&quot;</span>, <span class="dt">rotation =</span> <span class="dv">-90</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_ax_x</span>(my_barchart, <span class="dt">cross_between =</span> <span class="st">&#39;between&#39;</span>, </a>
+<a class="sourceLine" id="cb6-2" title="2">  <span class="dt">major_tick_mark =</span> <span class="st">&quot;in&quot;</span>, <span class="dt">minor_tick_mark =</span> <span class="st">&quot;none&quot;</span>)</a>
+<a class="sourceLine" id="cb6-3" title="3">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_ax_y</span>(my_barchart, <span class="dt">num_fmt =</span> <span class="st">&quot;0.00&quot;</span>, <span class="dt">rotation =</span> <span class="dv">-90</span>)</a></code></pre></div>
 <ul>
 <li>Titles (main title, axis labels) can be set with function <code>chart_labels()</code>:</li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_labels</span>(my_barchart, <span class="dt">title =</span> <span class="st">&quot;A main title&quot;</span>, </a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">  <span class="dt">xlab =</span> <span class="st">&quot;x axis title&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;y axis title&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_labels</span>(my_barchart, <span class="dt">title =</span> <span class="st">&quot;A main title&quot;</span>, </a>
+<a class="sourceLine" id="cb7-2" title="2">  <span class="dt">xlab =</span> <span class="st">&quot;x axis title&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;y axis title&quot;</span>)</a></code></pre></div>
 <ul>
 <li>Series visual settings can be customised with functions <code>chart_data_fill()</code>, <code>chart_data_stroke()</code>, <code>chart_data_size()</code>, <code>chart_data_symbol()</code>,<br />
 <code>chart_data_line_width()</code> and <code>chart_labels_text()</code>:</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_data_fill</span>(my_barchart,</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="dt">values =</span> <span class="kw">c</span>(<span class="dt">serie1 =</span> <span class="st">&quot;#003C63&quot;</span>, <span class="dt">serie2 =</span> <span class="st">&quot;#ED1F24&quot;</span>, <span class="dt">serie3 =</span> <span class="st">&quot;#F2AA00&quot;</span>) )</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_data_stroke</span>(my_barchart, <span class="dt">values =</span> <span class="st">&quot;transparent&quot;</span> )</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_data_fill</span>(my_barchart,</a>
+<a class="sourceLine" id="cb8-2" title="2">  <span class="dt">values =</span> <span class="kw">c</span>(<span class="dt">serie1 =</span> <span class="st">&quot;#003C63&quot;</span>, <span class="dt">serie2 =</span> <span class="st">&quot;#ED1F24&quot;</span>, <span class="dt">serie3 =</span> <span class="st">&quot;#F2AA00&quot;</span>) )</a>
+<a class="sourceLine" id="cb8-3" title="3">my_barchart &lt;-<span class="st"> </span><span class="kw">chart_data_stroke</span>(my_barchart, <span class="dt">values =</span> <span class="st">&quot;transparent&quot;</span> )</a></code></pre></div>
 <ul>
 <li>Global visual settings (e.g. groups fill and stroke colours) can be customised with functions <code>set_theme()</code>. See vignette <a href="details.html">details</a>.</li>
 </ul>
