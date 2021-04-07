@@ -1,3 +1,16 @@
+# mschart 0.2.6
+
+## Issues
+
+* fix issue with labels that contains `<>&`.
+* fix areachart that should never have a position defined for labels in XML series
+* fix `chart_labels_text()` when only a `fp_text` was used as value for arg `values`.
+
+## Changes
+
+* Mark functions `ph_with_chart` and `ph_with_chart_at` as defunct.
+* The R6 package is no longer used.
+
 # mschart 0.2.5
 
 ## Changes

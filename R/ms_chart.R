@@ -1,3 +1,112 @@
+#' @title linechart object
+#' @description Creation of a linechart object that can be
+#' inserted in a 'Microsoft' document.
+#' @param data a data.frame
+#' @param x x colname
+#' @param y y colname
+#' @param group grouping colname used to split data into series. Optional.
+#' @export
+#' @family 'Office' chart objects
+#' @examples
+#' library(officer)
+#' @example examples/02_linechart.R
+ms_linechart <- function(data, x, y, group = NULL){
+  out <- ms_chart(data = data, x = x, y = y, group = group)
+  out$options <- linechart_options()
+  class(out) <- c("ms_linechart", "ms_chart")
+  xtag <- if(inherits(data[[x]], "Date")){
+    "c:dateAx"
+  } else if(is.character(data[[x]]) || is.factor(data[[x]])){
+    "c:catAx"
+  } else {
+    "c:valAx"
+  }
+  out$axis_tag <- list(x = xtag,
+                       y = "c:valAx")
+
+  serie_names <- names(out$series_settings$symbol)
+  values <- setNames( rep( "none", length(serie_names)), serie_names )
+  out <- chart_data_symbol(out, values = values)
+
+  out
+}
+
+#' @title barchart object
+#' @description Creation of a barchart object that can be
+#' inserted in a 'Microsoft' document.
+#' @inheritParams ms_linechart
+#' @family 'Office' chart objects
+#' @export
+#' @examples
+#' library(officer)
+#' @example examples/01_barchart.R
+ms_barchart <- function(data, x, y, group = NULL){
+
+  out <- ms_chart(data = data, x = x, y = y, group = group)
+  out$options <- barchart_options()
+  class(out) <- c("ms_barchart", "ms_chart")
+  out
+}
+
+
+
+
+
+
+#' @title areachart object
+#' @description Creation of an areachart object that can be
+#' inserted in a 'Microsoft' document.
+#' @inheritParams ms_linechart
+#' @family 'Office' chart objects
+#' @export
+#' @examples
+#' library(officer)
+#' @example examples/03_areachart.R
+ms_areachart <- function(data, x, y, group = NULL){
+
+  out <- ms_chart(data = data, x = x, y = y, group = group)
+  class(out) <- c("ms_areachart", "ms_chart")
+  out <- chart_settings(out)
+  xtag <- if(inherits(data[[x]], "Date")){
+    "c:dateAx"
+  } else if(is.character(data[[x]]) || is.factor(data[[x]])){
+    "c:catAx"
+  } else {
+    "c:valAx"
+  }
+
+  out$axis_tag <- list(x = xtag, y = "c:valAx")
+
+  serie_names <- names(out$series_settings$colour)
+  values <- setNames( rep( "transparent", length(serie_names)), serie_names )
+  out <- chart_data_stroke(out, values = values)
+
+  out
+}
+
+#' @title scatterchart object
+#' @description Creation of a scatterchart object that can be
+#' inserted in a 'Microsoft' document.
+#' @inheritParams ms_linechart
+#' @family 'Office' chart objects
+#' @export
+#' @examples
+#' library(officer)
+#' @example examples/04_scatterchart.R
+ms_scatterchart <- function(data, x, y, group = NULL){
+
+  out <- ms_chart(data = data, x = x, y = y, group = group)
+  class(out) <- c("ms_scatterchart", "ms_chart")
+
+  out <- chart_settings(out)
+  out <- pretty_num_axes(out)
+
+  out
+}
+
+
+# ms_chart -----
+
 #' @importFrom grDevices colors
 ms_chart <- function(data, x, y, group = NULL){
 
@@ -11,13 +120,15 @@ ms_chart <- function(data, x, y, group = NULL){
 
   theme_ <- mschart_theme()
 
-  tryCatch(
-    x_axis_tag <- get_axis_tag(data[[x]]),
+  tryCatch({
+    x_axis_tag <- get_axis_tag(data[[x]])
+    },
     error = function(e) {
       stop("column ", shQuote(x), ": ", e$message, " [", paste(class(data[[x]]), collapse = ","), "]", call. = FALSE)
     })
-  tryCatch(
-    y_axis_tag <- get_axis_tag(data[[y]]),
+  tryCatch({
+    y_axis_tag <- get_axis_tag(data[[y]])
+    },
     error = function(e) {
       stop("column ", shQuote(y), ": ", e$message, " [", paste(class(data[[y]]), collapse = ","), "]", call. = FALSE)
     })
@@ -50,6 +161,7 @@ ms_chart <- function(data, x, y, group = NULL){
     palette_ <- sample(colors(), size = length(series_names), replace = TRUE)
 
   series_symbols <- rep("circle", length(series_names) )
+  series_lstyle <- rep("solid", length(series_names) )
   series_size <- rep(12, length(series_names) )
   series_lwidth <- rep(2, length(series_names) )
   labels_fp <- rep(list(fp_text(font.size = 0)), length(series_names) )
@@ -58,6 +170,7 @@ ms_chart <- function(data, x, y, group = NULL){
     fill = setNames(palette_, series_names),
     colour = setNames(palette_, series_names),
     symbol = setNames(series_symbols, series_names),
+    line_style = setNames(series_lstyle, series_names),
     size = setNames(series_size, series_names),
     line_width = setNames(series_lwidth, series_names),
     labels_fp = setNames(labels_fp, series_names),
@@ -115,9 +228,10 @@ colour_list <- list(
 )
 
 
+#' @importFrom htmltools htmlEscape
 #' @importFrom xml2 xml_attr<- xml_remove
 format.ms_chart  <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data = FALSE){
-  str_ <- ooml_code(x, id_x = id_x, id_y = id_y, sheetname = sheetname)
+  str_ <- to_pml(x, id_x = id_x, id_y = id_y, sheetname = sheetname)
 
 
   if( is.null(x$x_axis$num_fmt) )
@@ -125,10 +239,18 @@ format.ms_chart  <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data 
   if( is.null(x$y_axis$num_fmt) )
     x$y_axis$num_fmt <- x$theme[[x$fmt_names$y]]
 
-  axes_str <- axes_xml(x, id_x = id_x, id_y = id_y)
-  ns <- "xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
-  xml_elt <- paste0("<c:plotArea ", ns, "><c:layout/>", str_, axes_str, "</c:plotArea>")
+  x_axis_str <- axis_content_xml( x$x_axis, id = id_x, theme = x$theme,
+                                  cross_id = id_y, is_x = TRUE,
+                                  lab = htmlEscape(x$labels$x), rot = x$theme$title_x_rot )
+  x_axis_str <- sprintf("<%s>%s</%s>", x$axis_tag$x, x_axis_str, x$axis_tag$x)
 
+  y_axis_str <- axis_content_xml( x$y_axis, id = id_y, theme = x$theme,
+                                  cross_id = id_x, is_x = FALSE,
+                                  lab = htmlEscape(x$labels$y), rot = x$theme$title_y_rot )
+  y_axis_str <- sprintf("<%s>%s</%s>", x$axis_tag$y, y_axis_str, x$axis_tag$y)
+
+  ns <- "xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
+  xml_elt <- paste0("<c:plotArea ", ns, "><c:layout/>", str_, x_axis_str, y_axis_str, "</c:plotArea>")
   xml_doc <- read_xml(system.file(package = "mschart", "template", "chart.xml"))
 
   node <- xml_find_first(xml_doc, "//c:plotArea")
@@ -165,116 +287,3 @@ format.ms_chart  <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data 
   as.character(xml_doc)
 }
 
-
-#' @describeIn mschart line plot
-#' @export
-#' @examples
-#' library(officer)
-#'
-#'
-#' ##########################
-#' # linecharts example -----
-#' ##########################
-#'
-#' @example examples/02_linechart.R
-ms_linechart <- function(data, x, y, group = NULL){
-  out <- ms_chart(data = data, x = x, y = y, group = group)
-  out$options <- linechart_options()
-  class(out) <- c("ms_linechart", "ms_chart")
-
-  out$axis_tag <- list(x = "c:catAx",
-                  y = "c:valAx")
-
-  serie_names <- names(out$series_settings$symbol)
-  values <- setNames( rep( "none", length(serie_names)), serie_names )
-  out <- chart_data_symbol(out, values = values)
-
-  out
-}
-
-#' @describeIn mschart bar plot
-#' @export
-#' @examples
-#'
-#'
-#' ##########################
-#' # barcharts example -----
-#' ##########################
-#'
-#' @example examples/01_barchart.R
-ms_barchart <- function(data, x, y, group = NULL){
-
-  out <- ms_chart(data = data, x = x, y = y, group = group)
-  out$options <- barchart_options()
-  class(out) <- c("ms_barchart", "ms_chart")
-  out
-}
-
-#' @describeIn mschart area plot
-#' @export
-#' @examples
-#'
-#'
-#' ##########################
-#' # areacharts example -----
-#' ##########################
-#'
-#' @example examples/03_areachart.R
-ms_areachart <- function(data, x, y, group = NULL){
-
-  out <- ms_chart(data = data, x = x, y = y, group = group)
-  class(out) <- c("ms_areachart", "ms_chart")
-  out <- chart_settings(out)
-  out$axis_tag <- list(x = "c:catAx",
-                       y = "c:valAx")
-
-  serie_names <- names(out$series_settings$colour)
-  values <- setNames( rep( "transparent", length(serie_names)), serie_names )
-  out <- chart_data_stroke(out, values = values)
-
-  out
-}
-
-#' @describeIn mschart scatter plot
-#' @export
-#' @examples
-#'
-#'
-#' ##########################
-#' # scattercharts example -----
-#' ##########################
-#'
-#' @example examples/04_scatterchart.R
-ms_scatterchart <- function(data, x, y, group = NULL){
-
-  out <- ms_chart(data = data, x = x, y = y, group = group)
-  class(out) <- c("ms_scatterchart", "ms_chart")
-
-  out <- chart_settings(out)
-  out <- pretty_num_axes(out)
-
-  out
-}
-
-#' @export
-#' @title Modify axis and plot labels
-#' @description Add labels to a chart, labels can be specified for
-#' x axis, y axis and plot.
-#' @param x an \code{ms_chart} object.
-#' @param title,xlab,ylab Text to add
-#' @examples
-#' mylc <- ms_linechart(data = browser_ts, x = "date", y = "freq",
-#'   group = "browser")
-#' mylc <- chart_labels(mylc, title = "my title", xlab = "my x label",
-#'   ylab = "my y label")
-chart_labels <- function( x, title = NULL, xlab = NULL, ylab = NULL){
-  if( !is.null(title) ) x$labels[["title"]] <- htmlEscape(title)
-  else x$labels[["title"]] <- NULL
-
-  if( !is.null(xlab) ) x$labels[["x"]] <- htmlEscape(xlab)
-  else x$labels[["x"]] <- NULL
-
-  if( !is.null(ylab) ) x$labels[["y"]] <- htmlEscape(ylab)
-  else x$labels[["y"]] <- NULL
-  x
-}
