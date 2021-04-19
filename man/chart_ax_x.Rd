@@ -2,63 +2,9 @@
 % Please edit documentation in R/axis_setting.R
 \name{chart_ax_x}
 \alias{chart_ax_x}
-\alias{chart_ax_y}
-\alias{chart_ax_x.ms_chart}
-\alias{chart_ax_y.ms_chart}
-\title{axis settings}
+\title{x axis settings}
 \usage{
 chart_ax_x(
-  x,
-  orientation,
-  crosses,
-  cross_between,
-  major_tick_mark,
-  minor_tick_mark,
-  tick_label_pos,
-  display,
-  num_fmt,
-  rotation,
-  limit_min,
-  limit_max,
-  position,
-  second_axis = FALSE
-)
-
-chart_ax_y(
-  x,
-  orientation,
-  crosses,
-  cross_between,
-  major_tick_mark,
-  minor_tick_mark,
-  tick_label_pos,
-  display,
-  num_fmt,
-  rotation,
-  limit_min,
-  limit_max,
-  position,
-  second_axis = FALSE
-)
-
-\method{chart_ax_x}{ms_chart}(
-  x,
-  orientation,
-  crosses,
-  cross_between,
-  major_tick_mark,
-  minor_tick_mark,
-  tick_label_pos,
-  display,
-  num_fmt,
-  rotation,
-  limit_min,
-  limit_max,
-  position,
-  second_axis = FALSE
-)
-
-\method{chart_ax_y}{ms_chart}(
   x,
   orientation,
   crosses,
@@ -109,31 +55,24 @@ and \code{360}.}
 \item{second_axis}{unused}
 }
 \description{
-Define settings for an x or y axis.
+Define settings for an x axis.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{ms_chart}: chart_ax_x method for ms_chart objects
-
-\item \code{ms_chart}: chart_ax_y method for ms_chart objects
-}}
-
 \section{num_fmt}{
 
-All \verb{\\\%} need to be doubled, \verb{0\\\%\\\%} mean "a number
+All \verb{\%} need to be doubled, \verb{0\%\%} mean "a number
 and percent symbol".
 
 From my actual knowledge, depending on some chart type
 and options, the following values are not systematically
 used by office chart engine; i.e. when chart pre-compute
-percentages, it seems using \verb{0\\\%\\\%} will have no
+percentages, it seems using \verb{0\%\%} will have no
 effect.
 \itemize{
 \item \code{General}: default value
 \item \code{0}: display the number with no decimal
 \item \code{0.00}: display the number with two decimals
-\item \verb{0\\\%\\\%}: display as percentages
-\item \verb{0.00\\\%\\\%}: display as percentages with two digits
+\item \verb{0\%\%}: display as percentages
+\item \verb{0.00\%\%}: display as percentages with two digits
 \item \verb{#,##0}
 \item \verb{#,##0.00}
 \item \code{0.00E+00}
@@ -160,3 +99,35 @@ effect.
 }
 }
 
+\section{Illustrations}{
+
+
+\if{html}{
+
+\figure{fig_chart_ax_x_1.png}{options: width=60\%}
+
+}
+}
+
+\examples{
+library(mschart)
+library(officer)
+
+chart_01 <- ms_linechart(
+  data = us_indus_prod,
+  x = "date", y = "value",
+  group = "type")
+
+chart_01 <- chart_ax_x(
+  x = chart_01, num_fmt = "[$-fr-FR]mmm yyyy",
+  limit_min = min(us_indus_prod$date), limit_max = as.Date("1992-01-01"))
+
+chart_01 <- chart_theme(chart_01,
+  grid_major_line_x = fp_border(width = 0),
+  grid_minor_line_x = fp_border(width = 0)
+  )
+}
+\seealso{
+\code{\link[=chart_ax_y]{chart_ax_y()}}, \code{\link[=ms_areachart]{ms_areachart()}}, \code{\link[=ms_barchart]{ms_barchart()}}, \code{\link[=ms_scatterchart]{ms_scatterchart()}},
+\code{\link[=ms_linechart]{ms_linechart()}}
+}

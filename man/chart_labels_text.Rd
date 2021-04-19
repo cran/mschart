@@ -9,9 +9,9 @@ chart_labels_text(x, values)
 \arguments{
 \item{x}{an \code{ms_chart} object.}
 
-\item{values}{a named list of \code{fp_text} objects to map data labels to.
+\item{values}{a named list of \code{\link[=fp_text]{fp_text()}} objects to map data labels to.
 It is a named list, the values will be matched based on the names.
-If it contains only one \code{fp_text} object, it will be associated to all existing series.}
+If it contains only one \code{\link[=fp_text]{fp_text()}} object, it will be associated to all existing series.}
 }
 \description{
 Specify mappings from levels in the data to displayed text font settings.
@@ -32,3 +32,14 @@ barchart <- chart_data_labels(barchart, show_val = TRUE)
 barchart <- chart_labels_text( barchart,
   values = fp_text_settings )
 }
+\seealso{
+Other Series customization functions: 
+\code{\link{chart_data_fill}()},
+\code{\link{chart_data_line_style}()},
+\code{\link{chart_data_line_width}()},
+\code{\link{chart_data_size}()},
+\code{\link{chart_data_smooth}()},
+\code{\link{chart_data_stroke}()},
+\code{\link{chart_data_symbol}()}
+}
+\concept{Series customization functions}

@@ -4,7 +4,7 @@
 \alias{ms_linechart}
 \title{linechart object}
 \usage{
-ms_linechart(data, x, y, group = NULL)
+ms_linechart(data, x, y, group = NULL, labels = NULL)
 }
 \arguments{
 \item{data}{a data.frame}
@@ -14,42 +14,88 @@ ms_linechart(data, x, y, group = NULL)
 \item{y}{y colname}
 
 \item{group}{grouping colname used to split data into series. Optional.}
+
+\item{labels}{colnames of columns to be used as labels into series. Optional.
+If more than a name, only the first one will be used as label, but all
+labels (transposed if a group is used) will be available in the Excel file
+associated with the chart.}
 }
 \description{
 Creation of a linechart object that can be
 inserted in a 'Microsoft' document.
+
+In a line chart, category data is distributed evenly along the horizontal axis, and
+all value data is distributed evenly along the vertical axis. Line charts can show
+continuous data over time on an evenly scaled axis, so they're ideal for showing
+trends in data at equal intervals, like months and quarters.
 }
+\section{Illustrations}{
+
+
+\if{html}{
+
+\figure{fig_ms_linechart_1.png}{options: width=60\%}
+
+\figure{fig_ms_linechart_2.png}{options: width=60\%}
+
+}
+}
+
 \examples{
 library(officer)
-mytheme <- mschart_theme(
-  axis_title_x = fp_text(color = "red", font.size = 24, bold = TRUE),
-  axis_title_y = fp_text(color = "green", font.size = 12, italic = TRUE),
-  grid_major_line_y = fp_border(width = 1, color = "orange"),
-  axis_ticks_y = fp_border(width = 1, color = "orange") )
-
 # example chart_01 -------
-chart_01 <- ms_linechart(data = iris, x = "Sepal.Length",
-                      y = "Sepal.Width", group = "Species")
-chart_01 <- chart_ax_y(chart_01, num_fmt = "0.00", rotation = -90)
-chart_01 <- set_theme(chart_01, mytheme)
+chart_01 <- ms_linechart(
+  data = us_indus_prod,
+  x = "date", y = "value",
+  group = "type"
+)
 
+chart_01 <- chart_ax_x(
+  x = chart_01, num_fmt = "[$-fr-FR]mmm yyyy",
+  limit_min = min(us_indus_prod$date), limit_max = as.Date("1992-01-01")
+)
+
+chart_01 <- chart_data_stroke(
+  x = chart_01,
+  values = c(adjusted = "red", unadjusted = "gray")
+)
+
+chart_01 <- chart_data_line_width(
+  x = chart_01,
+  values = c(adjusted = 2, unadjusted = 5)
+)
+
+chart_01 <- chart_theme(chart_01,
+  grid_major_line_x = fp_border(width = 0),
+  grid_minor_line_x = fp_border(width = 0)
+)
 
 # example chart_02 -------
-chart_02 <- ms_linechart(data = browser_ts, x = "date",
-                      y = "freq", group = "browser")
-chart_02 <- chart_ax_y(chart_02, cross_between = "between", num_fmt = "General")
-chart_02 <- chart_ax_x(chart_02, cross_between = "midCat", num_fmt = "m/d/yy")
-chart_02 <- set_theme(chart_02, mytheme)
+data <- data.frame(
+  supp = factor(rep(c("OJ", "VC"), each = 3), levels = c("OJ", "VC")),
+  dose = factor(rep(c("low", "medium", "high"), 2), levels = c("low", "medium", "high")),
+  length = c(13.23, 22.7, 24.06, 7.98, 16.77, 26.14),
+  label = LETTERS[1:6],
+  stringsAsFactors = FALSE
+)
 
-
-# example chart_03 -------
-chart_03 <- ms_linechart(data = browser_ts, x = "date",
-                      y = "freq", group = "browser")
-chart_03 <- chart_ax_x(chart_03, cross_between = "midCat", num_fmt = "m/d/yy")
-chart_03 <- chart_settings(chart_03, grouping = "percentStacked")
-
+chart_02 <- ms_linechart(
+  data = data, x = "dose", y = "length",
+  group = "supp", labels = "label"
+)
+chart_02 <- chart_ax_y(
+  x = chart_02, cross_between = "between",
+  limit_min = 5, limit_max = 30,
+  num_fmt = "General"
+)
+chart_02 <- chart_data_labels(
+  x = chart_02, position = "l"
+)
 }
 \seealso{
+\code{\link[=chart_settings]{chart_settings()}}, \code{\link[=chart_ax_x]{chart_ax_x()}}, \code{\link[=chart_ax_y]{chart_ax_y()}},
+\code{\link[=chart_data_labels]{chart_data_labels()}}, \code{\link[=chart_theme]{chart_theme()}}, \code{\link[=chart_labels]{chart_labels()}}
+
 Other 'Office' chart objects: 
 \code{\link{ms_areachart}()},
 \code{\link{ms_barchart}()},
