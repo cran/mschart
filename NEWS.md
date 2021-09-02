@@ -1,3 +1,14 @@
+# mschart 0.3.1
+
+## New features
+
+* Support for linechart with or without lines and with or without markers
+
+## Issues
+
+* fix issue with scattercharts and ordering in the Excel dataset
+* fix issue with scattercharts when points should be joined by a line
+
 # mschart 0.3.0
 
 ## Issues

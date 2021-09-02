@@ -45,13 +45,9 @@ ms_linechart <- function(data, x, y, group = NULL, labels = NULL){
   if(!is.numeric(data[[y]])){
     stop("y column should be numeric.")
   }
+  out <- chart_settings(out)
 
-  out$axis_tag <- list(x = xtag,
-                       y = "c:valAx")
-
-  serie_names <- names(out$series_settings$symbol)
-  values <- setNames( rep( "none", length(serie_names)), serie_names )
-  out <- chart_data_symbol(out, values = values)
+  out$axis_tag <- list(x = xtag, y = "c:valAx")
 
   out
 }
@@ -201,6 +197,9 @@ ms_chart <- function(data, x, y, group = NULL, labels = NULL, excel_data_setup =
   stopifnot(is.data.frame(data))
   stopifnot(x %in% names(data))
   stopifnot(y %in% names(data))
+
+  if( inherits(data, "data.table") || inherits(data, "tbl_df") || inherits(data, "tbl") )
+    data <- as.data.frame(data, stringsAsFactors = FALSE)
 
   if( !is.null(group) && !(group %in% names(data)) ){
     stop("column ", shQuote(group), " could not be found in data.", call. = FALSE)
