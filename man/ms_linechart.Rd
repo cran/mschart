@@ -4,7 +4,7 @@
 \alias{ms_linechart}
 \title{linechart object}
 \usage{
-ms_linechart(data, x, y, group = NULL, labels = NULL)
+ms_linechart(data, x, y, group = NULL, labels = NULL, asis = FALSE)
 }
 \arguments{
 \item{data}{a data.frame}
@@ -19,6 +19,9 @@ ms_linechart(data, x, y, group = NULL, labels = NULL)
 If more than a name, only the first one will be used as label, but all
 labels (transposed if a group is used) will be available in the Excel file
 associated with the chart.}
+
+\item{asis}{bool parameter defaulting to FALSE. If TRUE the data will not be
+modified.}
 }
 \description{
 Creation of a linechart object that can be
@@ -32,13 +35,11 @@ trends in data at equal intervals, like months and quarters.
 \section{Illustrations}{
 
 
-\if{html}{
+\if{html}{\figure{fig_ms_linechart_1.png}{options: width="500"}}
 
-\figure{fig_ms_linechart_1.png}{options: width=60\%}
+\if{html}{\figure{fig_ms_linechart_2.png}{options: width="500"}}
 
-\figure{fig_ms_linechart_2.png}{options: width=60\%}
-
-}
+\if{html}{\figure{fig_ms_linechart_3.png}{options: width="500"}}
 }
 
 \examples{
@@ -90,6 +91,29 @@ chart_02 <- chart_ax_y(
 )
 chart_02 <- chart_data_labels(
   x = chart_02, position = "l"
+)
+
+# example chart 03 -------
+chart_03 <- ms_linechart(
+  data = data, x = "dose", y = "length",
+  group = "supp", labels = "label"
+)
+chart_03 <- chart_ax_y(
+  x = chart_03, cross_between = "between",
+  limit_min = 5, limit_max = 30,
+  num_fmt = "General"
+)
+chart_03 <- chart_data_labels(
+  x = chart_03, position = "l"
+)
+
+chart_03 <- chart_settings(
+  x = chart_03, table = TRUE
+)
+
+chart_03 <- chart_table(chart_03,
+  horizontal = TRUE, vertical = FALSE,
+  outline = TRUE, show_keys = FALSE
 )
 }
 \seealso{

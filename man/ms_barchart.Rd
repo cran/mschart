@@ -4,7 +4,7 @@
 \alias{ms_barchart}
 \title{barchart object}
 \usage{
-ms_barchart(data, x, y, group = NULL, labels = NULL)
+ms_barchart(data, x, y, group = NULL, labels = NULL, asis = FALSE)
 }
 \arguments{
 \item{data}{a data.frame}
@@ -19,6 +19,9 @@ ms_barchart(data, x, y, group = NULL, labels = NULL)
 If more than a name, only the first one will be used as label, but all
 labels (transposed if a group is used) will be available in the Excel file
 associated with the chart.}
+
+\item{asis}{bool parameter defaulting to FALSE. If TRUE the data will not be
+modified.}
 }
 \description{
 Creation of a barchart object that can be
@@ -37,15 +40,17 @@ Consider using a bar chart when:
 \section{Illustrations}{
 
 
-\if{html}{
+\if{html}{\figure{fig_ms_barchart_1.png}{options: width="500"}}
 
-\figure{fig_ms_barchart_1.png}{options: width=60\%}
+\if{html}{\figure{fig_ms_barchart_2.png}{options: width="500"}}
 
-\figure{fig_ms_barchart_2.png}{options: width=60\%}
+\if{html}{\figure{fig_ms_barchart_3.png}{options: width="500"}}
 
-\figure{fig_ms_barchart_3.png}{options: width=60\%}
+\if{html}{\figure{fig_ms_barchart_4.png}{options: width="500"}}
 
-}
+\if{html}{\figure{fig_ms_barchart_5.png}{options: width="500"}}
+
+\if{html}{\figure{fig_ms_barchart_6.png}{options: width="500"}}
 }
 
 \examples{
@@ -77,7 +82,8 @@ chart_01 <- chart_ax_y(
 # example chart 02 -------
 dat <- data.frame(
   Species = factor(c("setosa", "versicolor", "virginica"),
-                   levels = c("setosa", "versicolor", "virginica")),
+    levels = c("setosa", "versicolor", "virginica")
+  ),
   mean = c(5.006, 5.936, 6.588)
 )
 chart_02 <- ms_barchart(data = dat, x = "Species", y = "mean")
@@ -124,27 +130,35 @@ chart_03 <- chart_labels_text(chart_03, fp_text(color = "white", bold = TRUE, fo
 
 dat_groups <-
   data.frame(
-    cut = c("Fair","Fair","Fair","Fair","Fair",
-            "Fair","Fair","Fair","Good","Good","Good","Good","Good",
-            "Good","Good","Good","Very Good","Very Good","Very Good",
-            "Very Good","Very Good","Very Good","Very Good","Very Good",
-            "Premium","Premium","Premium","Premium","Premium",
-            "Premium","Premium","Premium","Ideal","Ideal","Ideal","Ideal",
-            "Ideal","Ideal","Ideal","Ideal"),
-    clarity = c("I1","SI2","SI1","VS2","VS1","VVS2",
-                "VVS1","IF","I1","SI2","SI1","VS2","VS1","VVS2","VVS1",
-                "IF","I1","SI2","SI1","VS2","VS1","VVS2","VVS1","IF",
-                "I1","SI2","SI1","VS2","VS1","VVS2","VVS1","IF","I1",
-                "SI2","SI1","VS2","VS1","VVS2","VVS1","IF"),
-    carat = c(1.065,1.01,0.98,0.9,0.77,0.7,0.7,
-              0.47,1.07,1,0.79,0.82,0.7,0.505,0.4,0.46,1.145,1.01,
-              0.77,0.71,0.7,0.4,0.36,0.495,1.11,1.04,0.9,0.72,0.7,
-              0.455,0.4,0.36,1.13,1,0.71,0.53,0.53,0.44,0.4,0.34),
-    n = c(210L,466L,408L,261L,170L,69L,17L,9L,
-          96L,1081L,1560L,978L,648L,286L,186L,71L,84L,2100L,
-          3240L,2591L,1775L,1235L,789L,268L,205L,2949L,3575L,3357L,
-          1989L,870L,616L,230L,146L,2598L,4282L,5071L,3589L,
-          2606L,2047L,1212L)
+    cut = c(
+      "Fair", "Fair", "Fair", "Fair", "Fair",
+      "Fair", "Fair", "Fair", "Good", "Good", "Good", "Good", "Good",
+      "Good", "Good", "Good", "Very Good", "Very Good", "Very Good",
+      "Very Good", "Very Good", "Very Good", "Very Good", "Very Good",
+      "Premium", "Premium", "Premium", "Premium", "Premium",
+      "Premium", "Premium", "Premium", "Ideal", "Ideal", "Ideal", "Ideal",
+      "Ideal", "Ideal", "Ideal", "Ideal"
+    ),
+    clarity = c(
+      "I1", "SI2", "SI1", "VS2", "VS1", "VVS2",
+      "VVS1", "IF", "I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1",
+      "IF", "I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF",
+      "I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF", "I1",
+      "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"
+    ),
+    carat = c(
+      1.065, 1.01, 0.98, 0.9, 0.77, 0.7, 0.7,
+      0.47, 1.07, 1, 0.79, 0.82, 0.7, 0.505, 0.4, 0.46, 1.145, 1.01,
+      0.77, 0.71, 0.7, 0.4, 0.36, 0.495, 1.11, 1.04, 0.9, 0.72, 0.7,
+      0.455, 0.4, 0.36, 1.13, 1, 0.71, 0.53, 0.53, 0.44, 0.4, 0.34
+    ),
+    n = c(
+      210L, 466L, 408L, 261L, 170L, 69L, 17L, 9L,
+      96L, 1081L, 1560L, 978L, 648L, 286L, 186L, 71L, 84L, 2100L,
+      3240L, 2591L, 1775L, 1235L, 789L, 268L, 205L, 2949L, 3575L, 3357L,
+      1989L, 870L, 616L, 230L, 146L, 2598L, 4282L, 5071L, 3589L,
+      2606L, 2047L, 1212L
+    )
   )
 
 dat_groups$label <- sprintf(
@@ -155,17 +169,17 @@ dat_groups
 
 text_prop <- fp_text(font.size = 11, color = "gray")
 
-chrt <- ms_barchart(
+chart_04 <- ms_barchart(
   data = dat_groups, x = "cut",
   labels = "label", y = "n", group = "clarity"
 )
-chrt <- chart_settings(chrt,
+chart_04 <- chart_settings(chart_04,
   grouping = "clustered", dir = "horizontal",
   gap_width = 0
 )
-chrt <- chart_data_labels(chrt, position = "outEnd")
-chrt <- chart_labels_text(chrt, text_prop)
-chrt <- chart_theme(chrt, title_x_rot = 270, title_y_rot = 0)
+chart_04 <- chart_data_labels(chart_04, position = "outEnd")
+chart_04 <- chart_labels_text(chart_04, text_prop)
+chart_04 <- chart_theme(chart_04, title_x_rot = 270, title_y_rot = 0)
 
 # example chart 05 -------
 
@@ -174,18 +188,33 @@ dat_no_group <- data.frame(
   cut = c("Fair", "Good", "Very Good", "Premium", "Ideal"),
   carat = c(1, 0.82, 0.71, 0.86, 0.54),
   n = c(1610L, 4906L, 12082L, 13791L, 21551L),
-  label = c("carat median is 1.0",
-            "carat median is 0.8","carat median is 0.7",
-            "carat median is 0.9","carat median is 0.5")
+  label = c(
+    "carat median is 1.0",
+    "carat median is 0.8", "carat median is 0.7",
+    "carat median is 0.9", "carat median is 0.5"
+  )
 )
-chrt <- ms_barchart(
+chart_05 <- ms_barchart(
   data = dat_no_group,
   x = "cut", labels = "label", y = "n"
 )
-chrt <- chart_settings(chrt,
-  grouping = "clustered")
-chrt <- chart_data_labels(chrt, position = "outEnd")
-chrt <- chart_labels_text(chrt, text_prop)
+chart_05 <- chart_settings(chart_05,
+  grouping = "clustered"
+)
+chart_05 <- chart_data_labels(chart_05, position = "outEnd")
+chart_05 <- chart_labels_text(chart_05, text_prop)
+
+# example chart 06 -------
+chart_06 <- ms_barchart(
+  data = dat_no_group,
+  x = "cut", labels = "label", y = "n"
+)
+chart_06 <- chart_settings(chart_06,
+  grouping = "clustered", table = TRUE
+)
+chart_06 <- chart_data_labels(chart_06, position = "outEnd")
+chart_06 <- chart_labels_text(chart_06, text_prop)
+
 
 }
 \seealso{
