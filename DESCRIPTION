@@ -2,13 +2,15 @@ Package: mschart
 Type: Package
 Title: Chart Generation for 'Microsoft Word' and 'Microsoft PowerPoint'
         Documents
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
     person("David", "Gohel", role = c("aut", "cre"), 
       email = "david.gohel@ardata.fr"),
     person(given = "ArData", role = "cph"),
     person("YouGov", role = "fnd"),
     person("Jan Marvin", "Garbuszus", role = "ctb", comment = "support for openxls2"),
+    person("Stefan", "Moog", role = "ctb", email = 'moogs@gmx.de', comment = "support to set chart and plot area color and border"),
+    person("Eli", "Daniels", role = "ctb", email = 'eli.daniels@ardata.fr'),
     person("Marlon", "Molina", role = "ctb", comment = "added table feature"),
     person("Rokas", "Klydzia", role = "ctb", comment = "custom labels"),
     person("David", "Camposeco", role = "ctb", 
@@ -27,22 +29,24 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 2.10)
 Imports: stats, data.table, officer (>= 0.3.6), cellranger, writexl,
-        grDevices, xml2 (>= 1.1.0), htmltools, utils
+        grDevices, xml2 (>= 1.1.0), htmltools, utils, scales
 URL: https://ardata-fr.github.io/officeverse/,
         https://ardata-fr.github.io/mschart/
 BugReports: https://github.com/ardata-fr/mschart/issues
-RoxygenNote: 7.2.2
+RoxygenNote: 7.3.2
 Suggests: tinytest, doconv
 NeedsCompilation: no
-Packaged: 2022-11-30 20:35:26 UTC; davidgohel
+Packaged: 2025-08-18 13:54:44 UTC; davidgohel
 Author: David Gohel [aut, cre],
   ArData [cph],
   YouGov [fnd],
   Jan Marvin Garbuszus [ctb] (support for openxls2),
+  Stefan Moog [ctb] (support to set chart and plot area color and border),
+  Eli Daniels [ctb],
   Marlon Molina [ctb] (added table feature),
   Rokas Klydzia [ctb] (custom labels),
   David Camposeco [ctb] (chart_data_smooth function),
   Dan Joplin [ctb] (fix scatter plot data structure)
 Maintainer: David Gohel <david.gohel@ardata.fr>
 Repository: CRAN
-Date/Publication: 2022-11-30 21:20:02 UTC
+Date/Publication: 2025-08-18 15:20:02 UTC
