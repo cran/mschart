@@ -1,8 +1,9 @@
 #' @export
-#' @title set chart options
+#' @title Set chart options
 #' @description Set chart properties.
 #' @param x an \code{ms_chart} object.
 #' @param ... unused parameter
+#' @return An `ms_chart` object.
 #' @seealso [ms_barchart()], [ms_areachart()], [ms_scatterchart()], [ms_linechart()]
 #' @section Illustrations:
 #'
@@ -42,9 +43,30 @@ chart_settings <- function(x, ...) {
 }
 
 
-barchart_options <- function(vary_colors = FALSE, gap_width = 150,
-                             dir = "vertical", grouping = "clustered",
-                             overlap = 0, table = FALSE) {
+# Warn when a user passes `table = ...` to a chart_settings method
+# that does not support data tables. Excel only renders <c:dTable>
+# for bar / line / area / stock charts, so the arg would otherwise
+# be silently absorbed by `...` on the other types.
+warn_unsupported_table <- function(x, ...) {
+  if ("table" %in% names(list(...))) {
+    warning(
+      "`table` is not supported on '", class(x)[1],
+      "' charts and was ignored. Data tables are only available on ",
+      "'ms_barchart', 'ms_linechart', 'ms_areachart' and 'ms_stockchart'.",
+      call. = FALSE
+    )
+  }
+}
+
+
+barchart_options <- function(
+  vary_colors = FALSE,
+  gap_width = 150,
+  dir = "vertical",
+  grouping = "clustered",
+  overlap = 0,
+  table = FALSE
+) {
   # bardir <- structure(c("bar", "col"), .Names = c("horizontal", "vertical"))
   bardir <- c("horizontal", "vertical")
   if (!dir %in% bardir) {
@@ -55,13 +77,23 @@ barchart_options <- function(vary_colors = FALSE, gap_width = 150,
     stop("gap_width should be between 0 and 500")
   }
   if (!grouping %in% st_bargrouping) {
-    stop("grouping should be one of ", paste0(shQuote(st_bargrouping), collapse = ", "))
+    stop(
+      "grouping should be one of ",
+      paste0(shQuote(st_bargrouping), collapse = ", ")
+    )
   }
   if (!(overlap >= -100 && overlap <= 100)) {
     stop("overlap should be between -100 and 100")
   }
 
-  out <- list(vary_colors = vary_colors, gap_width = gap_width, dir = dir, grouping = grouping, overlap = overlap, table = table)
+  out <- list(
+    vary_colors = vary_colors,
+    gap_width = gap_width,
+    dir = dir,
+    grouping = grouping,
+    overlap = overlap,
+    table = table
+  )
   class(out) <- "barchart_options"
   out
 }
@@ -69,12 +101,15 @@ barchart_options <- function(vary_colors = FALSE, gap_width = 150,
 
 #' @export
 #' @describeIn chart_settings barchart settings
-#' @param vary_colors if \code{TRUE} the data points in the single series are displayed the same color.
+#' @param vary_colors if \code{TRUE}, each data point in a single series is displayed in a different color.
 #' @param gap_width A gap appears between the bar or clustered bars for each category on a bar chart.
 #' The default width for this gap is 150 percent of the bar width. It can be set
 #' between 0 and 500 percent of the bar width.
-#' @param dir the direction of the bars in the chart, value must one of "horizontal" or "vertical".
-#' @param grouping grouping for a barchart, a linechart or an area chart. must be one of "percentStacked", "clustered", "standard" or "stacked".
+#' @param dir the direction of the bars in the chart, value must be one of "horizontal" or "vertical".
+#' @param grouping grouping of the series. For a barchart one of
+#' "percentStacked", "clustered", "standard" or "stacked". For a
+#' linechart or an areachart one of "percentStacked", "standard" or
+#' "stacked" ("clustered" is bar-only).
 #' @param overlap In a bar chart having two or more series, the bars for each
 #' category are clustered together. By default, these bars are directly
 #' adjacent to each other. The bars can be made to overlap each other or
@@ -84,23 +119,43 @@ barchart_options <- function(vary_colors = FALSE, gap_width = 150,
 #' full bar width and a setting of 100 causes all the bars in a category
 #' to be superimposed. The default value is 0.
 #' @param table if \code{TRUE} set a table below the barchart.
-chart_settings.ms_barchart <- function(x, vary_colors,
-                                       gap_width, dir, grouping, overlap, table, ...) {
+chart_settings.ms_barchart <- function(
+  x,
+  vary_colors,
+  gap_width,
+  dir,
+  grouping,
+  overlap,
+  table,
+  ...
+) {
   options <- barchart_options(
-    vary_colors = if(missing(vary_colors)) x$options$vary_colors else vary_colors,
-    gap_width = if(missing(gap_width)) x$options$gap_width else gap_width,
-    dir = if(missing(dir)) x$options$dir else dir,
-    grouping = if(missing(grouping)) x$options$grouping else grouping,
-    overlap = if(missing(overlap)) x$options$overlap else overlap,
-    table = if(missing(table)) x$options$table else table
+    vary_colors = if (missing(vary_colors)) {
+      x$options$vary_colors
+    } else {
+      vary_colors
+    },
+    gap_width = if (missing(gap_width)) x$options$gap_width else gap_width,
+    dir = if (missing(dir)) x$options$dir else dir,
+    grouping = if (missing(grouping)) x$options$grouping else grouping,
+    overlap = if (missing(overlap)) x$options$overlap else overlap,
+    table = if (missing(table)) x$options$table else table
   )
   x$options <- options
   x
 }
 
 
-linechart_options <- function(vary_colors = FALSE, table = FALSE) {
-  out <- list(vary_colors = vary_colors, grouping = "standard", table = table)
+linechart_options <- function(vary_colors = FALSE,
+                              grouping = "standard",
+                              table = FALSE) {
+  if (!grouping %in% st_grouping) {
+    stop(
+      "grouping should be one of ",
+      paste0(shQuote(st_grouping), collapse = ", ")
+    )
+  }
+  out <- list(vary_colors = vary_colors, grouping = grouping, table = table)
   class(out) <- "linechart_options"
   out
 }
@@ -109,30 +164,56 @@ linechart_options <- function(vary_colors = FALSE, table = FALSE) {
 #' @describeIn chart_settings linechart settings
 #' @param style Style for the linechart or scatterchart type of markers. One
 #' of 'none', 'line', 'lineMarker', 'marker', 'smooth', 'smoothMarker'.
-chart_settings.ms_linechart <- function(x, vary_colors, style = "lineMarker", table, ...) {
+chart_settings.ms_linechart <- function(x, vary_colors, style, grouping,
+                                        table, ...) {
   options <- linechart_options(
-    vary_colors = if(missing(vary_colors)) x$options$vary_colors else vary_colors,
-    table = if(missing(table)) x$options$table else table
+    vary_colors = if (missing(vary_colors)) {
+      x$options$vary_colors
+    } else {
+      vary_colors
+    },
+    grouping = if (missing(grouping)) {
+      x$options$grouping %||% "standard"
+    } else {
+      grouping
+    },
+    table = if (missing(table)) x$options$table else table
   )
 
+  style <- if (missing(style)) x$options$style %||% "lineMarker" else style
   if (!style %in% st_scatterstyle) {
-    stop("style should be one of ", paste0(shQuote(st_scatterstyle), collapse = ", "))
+    stop(
+      "style should be one of ",
+      paste0(shQuote(st_scatterstyle), collapse = ", ")
+    )
   }
 
-
-  options$linestyle <- style
+  options$style <- style
   x$options <- options
   x
 }
 
 
-
-
 #' @export
-#' @describeIn chart_settings linechart settings
-chart_settings.ms_areachart <- function(x, vary_colors = FALSE, grouping = "standard", table = FALSE, ...) {
+#' @describeIn chart_settings areachart settings
+chart_settings.ms_areachart <- function(x, vary_colors, grouping, table, ...) {
+  vary_colors <- if (missing(vary_colors)) {
+    x$options$vary_colors %||% FALSE
+  } else {
+    vary_colors
+  }
+  grouping <- if (missing(grouping)) {
+    x$options$grouping %||% "standard"
+  } else {
+    grouping
+  }
+  table <- if (missing(table)) x$options$table %||% FALSE else table
+
   if (!grouping %in% st_grouping) {
-    stop("grouping should be one of ", paste0(shQuote(st_grouping), collapse = ", "))
+    stop(
+      "grouping should be one of ",
+      paste0(shQuote(st_grouping), collapse = ", ")
+    )
   }
   options <- list(vary_colors = vary_colors, grouping = grouping, table = table)
   class(options) <- "areachart_options"
@@ -142,8 +223,16 @@ chart_settings.ms_areachart <- function(x, vary_colors = FALSE, grouping = "stan
 }
 
 #' @export
-#' @describeIn chart_settings linechart settings
-chart_settings.ms_scatterchart <- function(x, vary_colors = FALSE, style = "marker", ...) {
+#' @describeIn chart_settings scatterchart settings
+chart_settings.ms_scatterchart <- function(x, vary_colors, style, ...) {
+  warn_unsupported_table(x, ...)
+  vary_colors <- if (missing(vary_colors)) {
+    x$options$vary_colors %||% FALSE
+  } else {
+    vary_colors
+  }
+  style <- if (missing(style)) x$options$style %||% "marker" else style
+
   if (!style %in% st_scatterstyle) {
     stop(
       "style should be one of ",
@@ -157,10 +246,163 @@ chart_settings.ms_scatterchart <- function(x, vary_colors = FALSE, style = "mark
     x <- chart_data_smooth(x, values = 0)
   }
 
-
-  options <- list(vary_colors = vary_colors, scatterstyle = style, table = FALSE)
+  options <- list(
+    vary_colors = vary_colors,
+    style = style,
+    table = FALSE
+  )
   class(options) <- "scatterchart_options"
 
+  x$options <- options
+  x
+}
+
+
+#' @export
+#' @describeIn chart_settings stockchart settings
+#' @param hi_low_lines an [officer::fp_border()] for the high-low lines.
+#' Set to `FALSE` to hide them.
+#' @param up_bars_fill fill colour for up bars (OHLC only, close > open).
+#' @param up_bars_border an [officer::fp_border()] for up bar borders.
+#' @param down_bars_fill fill colour for down bars (OHLC only, close < open).
+#' @param down_bars_border an [officer::fp_border()] for down bar borders.
+chart_settings.ms_stockchart <- function(
+  x,
+  vary_colors,
+  table,
+  hi_low_lines,
+  up_bars_fill,
+  up_bars_border,
+  down_bars_fill,
+  down_bars_border,
+  ...
+) {
+  vary_colors <- if (missing(vary_colors)) {
+    x$options$vary_colors %||% FALSE
+  } else {
+    vary_colors
+  }
+  table <- if (missing(table)) x$options$table %||% FALSE else table
+  hi_low_lines <- if (missing(hi_low_lines)) {
+    x$options$hi_low_lines %||% fp_border(color = "#404040", width = 0.75)
+  } else {
+    hi_low_lines
+  }
+  up_bars_fill <- if (missing(up_bars_fill)) {
+    x$options$up_bars_fill %||% "white"
+  } else {
+    up_bars_fill
+  }
+  up_bars_border <- if (missing(up_bars_border)) {
+    x$options$up_bars_border %||% fp_border(color = "#404040", width = 0.75)
+  } else {
+    up_bars_border
+  }
+  down_bars_fill <- if (missing(down_bars_fill)) {
+    x$options$down_bars_fill %||% "#404040"
+  } else {
+    down_bars_fill
+  }
+  down_bars_border <- if (missing(down_bars_border)) {
+    x$options$down_bars_border %||% fp_border(color = "#404040", width = 0.75)
+  } else {
+    down_bars_border
+  }
+
+  options <- list(
+    vary_colors = vary_colors,
+    table = table,
+    hi_low_lines = hi_low_lines,
+    up_bars_fill = up_bars_fill,
+    up_bars_border = up_bars_border,
+    down_bars_fill = down_bars_fill,
+    down_bars_border = down_bars_border
+  )
+  class(options) <- "stockchart_options"
+  x$options <- options
+  x
+}
+
+#' @export
+#' @describeIn chart_settings radarchart settings
+chart_settings.ms_radarchart <- function(x, vary_colors, style, ...) {
+  warn_unsupported_table(x, ...)
+  vary_colors <- if (missing(vary_colors)) {
+    x$options$vary_colors %||% FALSE
+  } else {
+    vary_colors
+  }
+  style <- if (missing(style)) {
+    x$options$radarstyle %||% "marker"
+  } else {
+    style
+  }
+
+  if (!style %in% st_radarstyle) {
+    stop(
+      "style should be one of ",
+      paste0(shQuote(st_radarstyle), collapse = ", ")
+    )
+  }
+
+  options <- list(
+    vary_colors = vary_colors,
+    radarstyle = style,
+    table = FALSE
+  )
+  class(options) <- "radarchart_options"
+
+  x$options <- options
+  x
+}
+
+#' @export
+#' @describeIn chart_settings bubblechart settings
+#' @param bubble3D logical, use 3D effect for bubbles.
+chart_settings.ms_bubblechart <- function(x, vary_colors,
+                                          bubble3D = FALSE, ...) {
+  warn_unsupported_table(x, ...)
+  vary_colors <- if (missing(vary_colors)) {
+    x$options$vary_colors %||% FALSE
+  } else {
+    vary_colors
+  }
+
+  options <- list(
+    vary_colors = vary_colors,
+    bubble3D = bubble3D,
+    table = FALSE
+  )
+  class(options) <- "bubblechart_options"
+
+  x$options <- options
+  x
+}
+
+piechart_options <- function(vary_colors = TRUE, hole_size = 0) {
+  if (!(hole_size >= 0 && hole_size <= 90)) {
+    stop("hole_size should be between 0 and 90")
+  }
+  out <- list(vary_colors = vary_colors, hole_size = hole_size)
+  class(out) <- "piechart_options"
+  out
+}
+
+#' @export
+#' @describeIn chart_settings piechart settings
+#' @param hole_size size of the hole in a doughnut chart, between 0 and 90
+#' (percent of the radius). Default 0 produces a pie chart;
+#' values above 0 produce a doughnut chart.
+chart_settings.ms_piechart <- function(x, vary_colors, hole_size, ...) {
+  warn_unsupported_table(x, ...)
+  options <- piechart_options(
+    vary_colors = if (missing(vary_colors)) {
+      x$options$vary_colors
+    } else {
+      vary_colors
+    },
+    hole_size = if (missing(hole_size)) x$options$hole_size else hole_size
+  )
   x$options <- options
   x
 }

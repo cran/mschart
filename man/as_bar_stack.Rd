@@ -2,19 +2,22 @@
 % Please edit documentation in R/helpers.R
 \name{as_bar_stack}
 \alias{as_bar_stack}
-\title{set a barchart as a stacked barchart}
+\title{Set a barchart as a stacked barchart}
 \usage{
 as_bar_stack(x, dir = "vertical", percent = FALSE, gap_width = 50)
 }
 \arguments{
 \item{x}{an \code{\link{ms_barchart}} object}
 
-\item{dir}{the direction of the bars in the chart, value must one of "horizontal" or "vertical".}
+\item{dir}{the direction of the bars in the chart, value must be one of "horizontal" or "vertical".}
 
-\item{percent}{should bars be in percent}
+\item{percent}{should bars be displayed as percentages.}
 
-\item{gap_width}{gap width between the bar for each category on a bar chart, in percent
+\item{gap_width}{gap width between bars for each category on a bar chart, as a percentage
 of the bar width. It can be set between 0 and 500.}
+}
+\value{
+An \code{ms_chart} object.
 }
 \description{
 Apply settings to an \code{ms_barchart} object to
@@ -39,4 +42,7 @@ doc <- ph_with(doc, my_bar_stack_02, location = ph_location_fullsize())
 
 fileout <- tempfile(fileext = ".pptx")
 print(doc, target = fileout)
+}
+\seealso{
+\code{\link[=chart_settings]{chart_settings()}}, \code{\link[=ms_barchart]{ms_barchart()}}
 }

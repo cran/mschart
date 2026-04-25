@@ -4,13 +4,15 @@ assert_area <- function(data_x, data_y) {
   if (!is.numeric(data_y)) {
     stop("y column should be numeric.")
   }
-  check_x <- inherits(data_x, "Date") || is.character(data_x) || is.factor(data_x)
+  check_x <- inherits(data_x, "Date") ||
+    is.character(data_x) ||
+    is.factor(data_x)
   if (!check_x) {
     stop("x column should be a date or a categorical column.")
   }
 }
 
-asssert_scatter <- function(data_x, data_y) {
+assert_scatter <- function(data_x, data_y) {
   if (!is.numeric(data_y)) {
     stop("y column should be numeric.")
   }
@@ -25,7 +27,16 @@ assert_line <- function(data_y) {
   }
 }
 
-#' @title linechart object
+assert_pie <- function(data_x, data_y) {
+  if (!is.numeric(data_y)) {
+    stop("y column should be numeric.")
+  }
+  if (is.numeric(data_x)) {
+    stop("x column should be a categorical column (character or factor).")
+  }
+}
+
+#' @title Linechart object
 #' @description Creation of a linechart object that can be
 #' inserted in a 'Microsoft' document.
 #'
@@ -34,15 +45,19 @@ assert_line <- function(data_y) {
 #' continuous data over time on an evenly scaled axis, so they're ideal for showing
 #' trends in data at equal intervals, like months and quarters.
 #' @param data a data.frame
-#' @param x x colname
-#' @param y y colname
-#' @param group grouping colname used to split data into series. Optional.
-#' @param labels colnames of columns to be used as labels into series. Optional.
-#' If more than a name, only the first one will be used as label, but all
+#' @param x column name for x values.
+#' @param y column name for y values.
+#' @param group grouping column name used to split data into series. Optional.
+#' @param labels column names of columns to be used as custom data labels
+#' displayed next to data points (not axis labels). Optional.
+#' If more than one name is provided, only the first one will be used as a label, but all
 #' labels (transposed if a group is used) will be available in the Excel file
 #' associated with the chart.
-#' @param asis bool parameter defaulting to FALSE. If TRUE the data will not be
-#' modified.
+#' @param asis logical parameter defaulting to FALSE. When FALSE, the data is
+#' reshaped internally so that each series becomes a separate column. When TRUE,
+#' the data is used as-is and must already have one column for categories and
+#' one column per series.
+#' @return An `ms_chart` object.
 #' @export
 #' @family 'Office' chart objects
 #' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
@@ -57,10 +72,22 @@ assert_line <- function(data_y) {
 #' @examples
 #' library(officer)
 #' @example examples/02_linechart.R
-ms_linechart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) {
+ms_linechart <- function(
+  data,
+  x,
+  y,
+  group = NULL,
+  labels = NULL,
+  asis = FALSE
+) {
   out <- ms_chart(
-    data = data, x = x, y = y, group = group, labels = labels,
-    type = "lineplot", asis = asis
+    data = data,
+    x = x,
+    y = y,
+    group = group,
+    labels = labels,
+    type = "lineplot",
+    asis = asis
   )
   out$options <- linechart_options()
   class(out) <- c("ms_linechart", "ms_chart")
@@ -68,7 +95,7 @@ ms_linechart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) 
   out
 }
 
-#' @title barchart object
+#' @title Barchart object
 #' @description Creation of a barchart object that can be
 #' inserted in a 'Microsoft' document.
 #'
@@ -81,6 +108,7 @@ ms_linechart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) 
 #' * The axis labels are long.
 #' * The values that are shown are durations.
 #' @inheritParams ms_linechart
+#' @return An `ms_chart` object.
 #' @family 'Office' chart objects
 #' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
 #' [chart_data_labels()], [chart_theme()], [chart_labels()]
@@ -103,15 +131,20 @@ ms_linechart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) 
 #' @example examples/01_barchart.R
 ms_barchart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) {
   out <- ms_chart(
-    data = data, x = x, y = y, group = group, labels = labels,
-    type = "barplot", asis = asis
+    data = data,
+    x = x,
+    y = y,
+    group = group,
+    labels = labels,
+    type = "barplot",
+    asis = asis
   )
   out$options <- barchart_options()
   class(out) <- c("ms_barchart", "ms_chart")
   out
 }
 
-#' @title areachart object
+#' @title Areachart object
 #' @description Creation of an areachart object that can be
 #' inserted in a 'Microsoft' document.
 #'
@@ -119,6 +152,7 @@ ms_barchart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) {
 #' total value across a trend. By showing the sum of the plotted values, an area
 #' chart also shows the relationship of parts to a whole.
 #' @inheritParams ms_linechart
+#' @return An `ms_chart` object.
 #' @family 'Office' chart objects
 #' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
 #' [chart_data_labels()], [chart_theme()], [chart_labels()]
@@ -126,10 +160,22 @@ ms_barchart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) {
 #' @examples
 #' library(officer)
 #' @example examples/03_areachart.R
-ms_areachart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) {
+ms_areachart <- function(
+  data,
+  x,
+  y,
+  group = NULL,
+  labels = NULL,
+  asis = FALSE
+) {
   out <- ms_chart(
-    data = data, x = x, y = y, group = group, labels = labels,
-    type = "areaplot", asis = asis
+    data = data,
+    x = x,
+    y = y,
+    group = group,
+    labels = labels,
+    type = "areaplot",
+    asis = asis
   )
   class(out) <- c("ms_areachart", "ms_chart")
   out <- chart_settings(out)
@@ -141,10 +187,11 @@ ms_areachart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) 
   out
 }
 
-#' @title scatterchart object
+#' @title Scatterchart object
 #' @description Creation of a scatterchart object that can be
 #' inserted in a 'Microsoft' document.
 #' @inheritParams ms_linechart
+#' @return An `ms_chart` object.
 #' @family 'Office' chart objects
 #' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
 #' [chart_data_labels()], [chart_theme()], [chart_labels()]
@@ -157,11 +204,23 @@ ms_areachart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) 
 #' @examples
 #' library(officer)
 #' @example examples/04_scatterchart.R
-ms_scatterchart <- function(data, x, y, group = NULL, labels = NULL, asis = FALSE) {
+ms_scatterchart <- function(
+  data,
+  x,
+  y,
+  group = NULL,
+  labels = NULL,
+  asis = FALSE
+) {
   out <- ms_chart(
-    data = data, x = x, y = y, group = group, labels = labels,
+    data = data,
+    x = x,
+    y = y,
+    group = group,
+    labels = labels,
     excel_data_setup = transpose_series_bysplit,
-    type = "scatterplot", asis = asis
+    type = "scatterplot",
+    asis = asis
   )
   class(out) <- c("ms_scatterchart", "ms_chart")
 
@@ -170,34 +229,449 @@ ms_scatterchart <- function(data, x, y, group = NULL, labels = NULL, asis = FALS
   out
 }
 
+#' @title Stockchart object
+#' @description Creation of a stock chart object that can be inserted
+#' in a 'Microsoft' document. When `open` is omitted the chart is
+#' a High-Low-Close chart. When `open` is provided it becomes an
+#' Open-High-Low-Close chart with up/down bars (candlestick).
+#' @param data a data.frame
+#' @param x column name for categories (typically dates)
+#' @param open column name for open values (optional, enables OHLC mode)
+#' @param high column name for high values
+#' @param low column name for low values
+#' @param close column name for close values
+#' @return An `ms_chart` object.
+#' @family 'Office' chart objects
+#' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
+#' [chart_theme()], [chart_labels()]
+#' @export
+#' @examples
+#' library(officer)
+#'
+#' dat <- data.frame(
+#'   date = as.Date("2024-01-01") + 0:4,
+#'   open = c(44, 25, 38, 50, 34),
+#'   high = c(55, 57, 57, 58, 58),
+#'   low = c(11, 12, 13, 11, 25),
+#'   close = c(32, 35, 34, 35, 43)
+#' )
+#'
+#' # HLC chart
+#' stock_hlc <- ms_stockchart(
+#'   data = dat, x = "date",
+#'   high = "high", low = "low", close = "close"
+#' )
+#' stock_hlc
+#'
+#' # OHLC chart (candlestick)
+#' stock_ohlc <- ms_stockchart(
+#'   data = dat, x = "date",
+#'   open = "open", high = "high",
+#'   low = "low", close = "close"
+#' )
+#' stock_ohlc
+ms_stockchart <- function(data, x, open = NULL, high, low, close) {
+  stopifnot(is.data.frame(data))
+  all_cols <- c(x, open, high, low, close)
+  for (col in all_cols) {
+    if (!col %in% names(data)) {
+      stop("column ", shQuote(col), " not found in data", call. = FALSE)
+    }
+  }
+  num_cols <- c(open, high, low, close)
+  for (col in num_cols) {
+    if (!is.numeric(data[[col]])) {
+      stop("column ", shQuote(col), " must be numeric", call. = FALSE)
+    }
+  }
+
+  has_open <- !is.null(open)
+
+  if (has_open) {
+    series_names <- c(open, high, low, close)
+  } else {
+    series_names <- c(high, low, close)
+  }
+
+  # reshape to long format with fixed series order
+  data_long <- data.frame(
+    x_val = rep(data[[x]], length(series_names)),
+    y_val = unlist(lapply(series_names, function(s) data[[s]]),
+      use.names = FALSE
+    ),
+    group = factor(
+      rep(series_names, each = nrow(data)),
+      levels = series_names
+    ),
+    stringsAsFactors = FALSE
+  )
+  names(data_long)[1] <- x
+
+  out <- ms_chart(
+    data = data_long,
+    x = x,
+    y = "y_val",
+    group = "group",
+    type = "stockplot"
+  )
+  out$stock_cols <- if (has_open) {
+    list(open = open, high = high, low = low, close = close)
+  } else {
+    list(high = high, low = low, close = close)
+  }
+  out$axis_x_xml <- axis_content_xml
+  out$axis_y_xml <- axis_content_xml
+  class(out) <- c("ms_stockchart", "ms_chart")
+  out <- chart_settings(out)
+  out
+}
+
+#' @title Radarchart object
+#' @description Creation of a radar (spider) chart object that can be
+#' inserted in a 'Microsoft' document.
+#' @inheritParams ms_linechart
+#' @return An `ms_chart` object.
+#' @family 'Office' chart objects
+#' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
+#' [chart_data_labels()], [chart_theme()], [chart_labels()]
+#' @export
+#' @examples
+#' library(officer)
+#'
+#' dat <- data.frame(
+#'   axis = c("Sales", "Marketing", "Dev", "Support", "HR"),
+#'   s1 = c(4, 3, 5, 2, 4),
+#'   s2 = c(3, 5, 2, 4, 3)
+#' )
+#' dat_long <- data.frame(
+#'   axis = rep(dat$axis, 2),
+#'   value = c(dat$s1, dat$s2),
+#'   group = rep(c("Team A", "Team B"), each = 5)
+#' )
+#'
+#' radar <- ms_radarchart(
+#'   data = dat_long, x = "axis",
+#'   y = "value", group = "group"
+#' )
+#' radar
+ms_radarchart <- function(
+  data, x, y, group = NULL,
+  labels = NULL, asis = FALSE
+) {
+  out <- ms_chart(
+    data = data, x = x, y = y,
+    group = group, labels = labels,
+    type = "radarplot", asis = asis
+  )
+  out$axis_x_xml <- axis_content_xml_radar
+  out$axis_y_xml <- axis_content_xml_radar
+  class(out) <- c("ms_radarchart", "ms_chart")
+  out <- chart_settings(out)
+  out
+}
+
+#' @title Bubblechart object
+#' @description Creation of a bubblechart object that can be
+#' inserted in a 'Microsoft' document. A bubble chart is a scatter
+#' chart where each point has a third numeric dimension controlling
+#' its size.
+#' @inheritParams ms_scatterchart
+#' @param size column name for bubble size values (must be numeric)
+#' @return An `ms_chart` object.
+#' @family 'Office' chart objects
+#' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
+#' [chart_data_labels()], [chart_theme()], [chart_labels()]
+#' @export
+#' @examples
+#' library(officer)
+#'
+#' dat <- data.frame(
+#'   x = c(1, 2, 3, 4, 5),
+#'   y = c(10, 20, 15, 25, 30),
+#'   sz = c(5, 10, 7, 15, 12),
+#'   grp = rep("s1", 5)
+#' )
+#'
+#' bubble <- ms_bubblechart(
+#'   data = dat, x = "x", y = "y",
+#'   size = "sz", group = "grp"
+#' )
+#'
+#' # adjust axes to avoid clipping extreme bubbles
+#' bubble <- chart_ax_x(bubble, limit_min = 0, limit_max = 6)
+#' bubble <- chart_ax_y(bubble, limit_min = 5, limit_max = 35)
+#' bubble
+ms_bubblechart <- function(
+  data,
+  x,
+  y,
+  size,
+  group = NULL,
+  labels = NULL,
+  asis = FALSE
+) {
+  if (!size %in% names(data)) {
+    stop("column ", shQuote(size), " not found in data", call. = FALSE)
+  }
+  if (!is.numeric(data[[size]])) {
+    stop("column ", shQuote(size), " must be numeric", call. = FALSE)
+  }
+
+  out <- ms_chart(
+    data = data,
+    x = x,
+    y = y,
+    group = group,
+    labels = labels,
+    excel_data_setup = transpose_series_bysplit,
+    type = "bubbleplot",
+    asis = asis
+  )
+  out$size_cols <- size
+  out$size <- size
+  # rebuild data_series to include size column
+  out$data_series <- transpose_series_bysplit(out)
+  class(out) <- c("ms_bubblechart", "ms_chart")
+
+  out <- chart_settings(out)
+
+  out
+}
+
+#' @title Combined chart object
+#' @description Combine several chart objects into a single chart
+#' with shared axes. Each chart must be a named argument.
+#'
+#' The title and x-axis label are taken from the first chart.
+#' The y-axis label of the first chart on the secondary axis is
+#' used as the secondary y-axis label.
+#'
+#' Only one secondary y-axis (right) and one secondary x-axis (top)
+#' are supported.
+#' @param ... named `ms_chart` objects.
+#' @param secondary_y character vector of chart names to plot on
+#' the secondary (right) y-axis.
+#' @param secondary_x character vector of chart names to plot on
+#' the secondary (top) x-axis.
+#' @family 'Office' chart objects
+#' @seealso [chart_settings()], [chart_ax_x()], [chart_ax_y()],
+#' [chart_data_labels()], [chart_theme()], [chart_labels()]
+#' @export
+#' @example examples/05_combochart.R
+ms_chart_combine <- function(..., secondary_y = NULL, secondary_x = NULL) {
+  inputs <- list(...)
+
+  if (is.null(names(inputs)) || any(names(inputs) == "")) {
+    stop("All charts must be named arguments.", call. = FALSE)
+  }
+  for (i in seq_along(inputs)) {
+    if (!inherits(inputs[[i]], "ms_chart")) {
+      stop(
+        "Argument ", shQuote(names(inputs)[i]),
+        " is not an ms_chart object.",
+        call. = FALSE
+      )
+    }
+  }
+
+  bad_y <- setdiff(secondary_y, names(inputs))
+  if (length(bad_y)) {
+    stop(
+      "secondary_y names not found: ",
+      paste(shQuote(bad_y), collapse = ", "),
+      call. = FALSE
+    )
+  }
+  bad_x <- setdiff(secondary_x, names(inputs))
+  if (length(bad_x)) {
+    stop(
+      "secondary_x names not found: ",
+      paste(shQuote(bad_x), collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  out <- inputs[[1]]
+
+  sec_y_done <- FALSE
+  sec_x_done <- FALSE
+
+  for (i in seq_along(inputs)[-1]) {
+    nm <- names(inputs)[i]
+    chart_i <- inputs[[i]]
+
+    is_sec_y <- nm %in% secondary_y
+    is_sec_x <- nm %in% secondary_x
+
+    lbl <- chart_i$labels
+    xlab <- NULL
+    ylab <- NULL
+
+    if (!sec_y_done && is_sec_y && !is_sec_x) {
+      chart_i$x_axis$delete <- 1L
+      chart_i$x_axis$axis_position <- "b"
+      chart_i$x_axis$crosses <- "autoZero"
+
+      chart_i$y_axis$delete <- 0L
+      chart_i$y_axis$axis_position <- "r"
+      chart_i$y_axis$crosses <- "max"
+
+      ylab <- lbl$y
+      sec_y_done <- TRUE
+    } else if (!sec_x_done && is_sec_x && !is_sec_y) {
+      chart_i$x_axis$delete <- 0L
+      chart_i$x_axis$axis_position <- "t"
+      chart_i$x_axis$crosses <- "max"
+
+      chart_i$y_axis$delete <- 1L
+      chart_i$y_axis$axis_position <- "l"
+      chart_i$y_axis$crosses <- "autoZero"
+
+      xlab <- lbl$x
+      sec_x_done <- TRUE
+    } else {
+      chart_i$y_axis <- axis_options(axis_position = "l", delete = 1L)
+      chart_i$x_axis <- axis_options(axis_position = "b", delete = 1L)
+    }
+
+    attr(chart_i, "secondary_y") <- is_sec_y
+    attr(chart_i, "secondary_x") <- is_sec_x
+    chart_i$labels$title <- list(title = NULL, x = xlab, y = ylab)
+
+    out$secondary <- append(out$secondary, list(chart_i))
+  }
+
+  out
+}
+
+#' @title Piechart object
+#' @description Creation of a piechart object that can be
+#' inserted in a 'Microsoft' document.
+#'
+#' Pie charts show the proportion of each category as a slice
+#' of a circle. Doughnut charts are similar but have a hole
+#' in the centre. Use `chart_settings(x, hole_size = ...)` to
+#' control the hole size: 0 produces a pie chart, values
+#' above 0 produce a doughnut chart.
+#'
+#' Data must be pre-aggregated: one row per slice, no grouping
+#' column.
+#' @param data a data.frame
+#' @param x column name for categories (slices).
+#' @param y column name for values (slice sizes).
+#' @param labels column names of columns to be used as custom data labels
+#' displayed next to data points (not axis labels). Optional.
+#' If more than one name is provided, only the first one will be used as a label, but all
+#' labels (transposed if a group is used) will be available in the Excel file
+#' associated with the chart.
+#' @return An `ms_chart` object.
+#' @export
+#' @family 'Office' chart objects
+#' @seealso [chart_settings()], [chart_data_labels()], [chart_theme()], [chart_labels()]
+#' @examples
+#' library(officer)
+#' library(mschart)
+#'
+#' dat <- data.frame(
+#'   browser = c("Chrome", "Firefox", "Safari", "Edge", "Other"),
+#'   value = c(64, 12, 8, 5, 11)
+#' )
+#'
+#' # Pie chart
+#' pie <- ms_piechart(data = dat, x = "browser", y = "value")
+#' pie <- chart_labels(pie, title = "Browser share")
+#'
+#' # Doughnut chart
+#' donut <- ms_piechart(data = dat, x = "browser", y = "value")
+#' donut <- chart_settings(donut, hole_size = 50)
+#' donut <- chart_labels(donut, title = "Browser share (donut)")
+ms_piechart <- function(data, x, y, labels = NULL) {
+  out <- ms_chart(
+    data = data,
+    x = x,
+    y = y,
+    group = NULL,
+    labels = labels,
+    type = "pieplot"
+  )
+  out$options <- piechart_options()
+  class(out) <- c("ms_piechart", "ms_chart")
+  out <- chart_settings(out)
+
+  # pie charts style slices, not series -- replace the series-level
+  # fill/colour/line_width with per-category vectors so chart_data_fill(),
+  # chart_data_stroke() and chart_data_line_width() target individual
+  # slices.
+  cat_values <- data[[x]]
+  cat_names <- if (is.factor(cat_values)) {
+    levels(cat_values)
+  } else {
+    as.character(unique(cat_values))
+  }
+  n <- length(cat_names)
+  if (n <= length(colour_list)) {
+    pal <- colour_list[[n]]
+  } else {
+    pal <- rep_len(colour_list[[length(colour_list)]], n)
+  }
+  out$series_settings$fill <- setNames(pal, cat_names)
+  out$series_settings$colour <- setNames(rep("transparent", n), cat_names)
+  out$series_settings$line_width <- setNames(rep(2, n), cat_names)
+
+  out
+}
+
 
 # ms_chart -----
 
 #' @importFrom grDevices colors
-ms_chart <- function(data, x, y, group = NULL, labels = NULL,
-                     excel_data_setup = shape_as_series,
-                     type = NULL, asis = FALSE) {
+ms_chart <- function(
+  data,
+  x,
+  y,
+  group = NULL,
+  labels = NULL,
+  excel_data_setup = shape_as_series,
+  type = NULL,
+  asis = FALSE
+) {
   stopifnot(is.data.frame(data))
   stopifnot(x %in% names(data))
   stopifnot(y %in% names(data))
 
   # if wb_data is passed, only create asis mschart output
-  if (inherits(data, "wb_data")) asis <- TRUE
+  if (inherits(data, "wb_data")) {
+    asis <- TRUE
+  }
 
   xvar <- x
   yvar <- y
 
-  if (inherits(data, "data.table") || inherits(data, "tbl_df") || inherits(data, "tbl")) {
+  if (
+    inherits(data, "data.table") ||
+      inherits(data, "tbl_df") ||
+      inherits(data, "tbl")
+  ) {
     data <- as.data.frame(data, stringsAsFactors = FALSE)
   }
 
   if (!is.null(group) && !(group %in% names(data))) {
-    stop("column ", shQuote(group), " could not be found in data.", call. = FALSE)
+    stop(
+      "column ",
+      shQuote(group),
+      " could not be found in data.",
+      call. = FALSE
+    )
   }
   if (!is.null(labels)) {
     labs <- labels[!labels %in% names(data)]
     if (!(all(labs))) {
-      stop("column(s) ", paste(shQuote(labs), collapse = ", "), " could not be found in data.", call. = FALSE)
+      stop(
+        "column(s) ",
+        paste(shQuote(labs), collapse = ", "),
+        " could not be found in data.",
+        call. = FALSE
+      )
     }
   }
 
@@ -219,21 +693,33 @@ ms_chart <- function(data, x, y, group = NULL, labels = NULL,
     assert_area(data_x, data_y)
   }
 
-  if (type == "scatterplot") {
-    asssert_scatter(data_x, data_y)
+  if (type == "scatterplot" || type == "bubbleplot") {
+    assert_scatter(data_x, data_y)
   }
 
-  if (type == "lineplot") {
+  if (type == "lineplot" || type == "radarplot" || type == "stockplot") {
     assert_line(data_y)
   }
 
+  if (type == "pieplot") {
+    assert_pie(data_x, data_y)
+  }
 
   tryCatch(
     {
       x_axis_tag <- get_axis_tag(data_x)
     },
     error = function(e) {
-      stop("column ", shQuote(x), ": ", e$message, " [", paste(class(data_x), collapse = ","), "]", call. = FALSE)
+      stop(
+        "column ",
+        shQuote(x),
+        ": ",
+        e$message,
+        " [",
+        paste(class(data_x), collapse = ","),
+        "]",
+        call. = FALSE
+      )
     }
   )
   tryCatch(
@@ -241,7 +727,16 @@ ms_chart <- function(data, x, y, group = NULL, labels = NULL,
       y_axis_tag <- get_axis_tag(data_y)
     },
     error = function(e) {
-      stop("column ", shQuote(y), ": ", e$message, " [", paste(class(data_y), collapse = ","), "]", call. = FALSE)
+      stop(
+        "column ",
+        shQuote(y),
+        ": ",
+        e$message,
+        " [",
+        paste(class(data_y), collapse = ","),
+        "]",
+        call. = FALSE
+      )
     }
   )
 
@@ -251,11 +746,14 @@ ms_chart <- function(data, x, y, group = NULL, labels = NULL,
   x <- x[1]
   y <- y[1]
 
-
   lbls <- list(title = NULL, x = x, y = y)
 
   out <- list(
-    data = data, x = x, y = y, group = group, label_cols = labels,
+    data = data,
+    x = x,
+    y = y,
+    group = group,
+    label_cols = labels,
     theme = theme_,
     options = list(),
     x_axis = x_axis_,
@@ -271,7 +769,9 @@ ms_chart <- function(data, x, y, group = NULL, labels = NULL,
     labels = lbls,
     asis = asis,
     xvar = xvar,
-    yvar = yvar
+    yvar = yvar,
+    axis_x_xml = axis_content_xml,
+    axis_y_xml = axis_content_xml
   )
   class(out) <- c("ms_chart")
   out <- chart_data_labels(out)
@@ -287,7 +787,7 @@ ms_chart <- function(data, x, y, group = NULL, labels = NULL,
     out$axis_tag <- list(x = xtag, y = "c:valAx")
   }
 
-  if (type == "scatterplot") {
+  if (type == "scatterplot" || type == "bubbleplot") {
     out <- pretty_num_axes(out, data_x, data_y)
   }
 
@@ -325,16 +825,17 @@ ms_chart <- function(data, x, y, group = NULL, labels = NULL,
   out
 }
 
-#' @title ms_chart print method
-#' @description an \code{ms_chart} object can not be rendered
+#' @title Print method for ms_chart
+#' @description An \code{ms_chart} object cannot be rendered
 #' in R. The default printing method will only display
-#' simple informations about the object.
+#' simple information about the object.
 #' If argument \code{preview} is set to TRUE, a \code{pptx} file
 #' will be produced and opened with function \code{browseURL}.
 #'
 #' @param x an \code{ms_chart} object.
 #' @param preview preview the chart in a PowerPoint document
 #' @param ... unused
+#' @return No return value, called for side effects.
 #' @export
 #' @importFrom officer read_pptx add_slide ph_location_fullsize ph_with
 #' @importFrom utils browseURL
@@ -350,9 +851,17 @@ print.ms_chart <- function(x, preview = FALSE, ...) {
   class_val <- setdiff(class(x), "ms_chart")
   cat(sprintf("* %s object\n\n", shQuote(class_val)))
 
-  cat(sprintf("* original data [%.0f,%.0f] (sample):\n", nrow(x$data), ncol(x$data)))
+  cat(sprintf(
+    "* original data [%.0f,%.0f] (sample):\n",
+    nrow(x$data),
+    ncol(x$data)
+  ))
   print(x$data[seq_len(min(c(nrow(x$data), 5))), ])
-  cat(sprintf("\n* series data [%.0f,%.0f] (sample):\n", nrow(x$data_series), ncol(x$data_series)))
+  cat(sprintf(
+    "\n* series data [%.0f,%.0f] (sample):\n",
+    nrow(x$data_series),
+    ncol(x$data_series)
+  ))
   print(x$data_series[seq_len(min(c(nrow(x$data_series), 5))), ])
 }
 
@@ -363,12 +872,75 @@ colour_list <- list(
   c("#4477AA", "#117733", "#DDCC77", "#CC6677"),
   c("#332288", "#88CCEE", "#117733", "#DDCC77", "#CC6677"),
   c("#332288", "#88CCEE", "#117733", "#DDCC77", "#CC6677", "#AA4499"),
-  c("#332288", "#88CCEE", "#44AA99", "#117733", "#DDCC77", "#CC6677", "#AA4499"),
-  c("#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#CC6677", "#AA4499"),
-  c("#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#CC6677", "#882255", "#AA4499"),
-  c("#332288", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#882255", "#AA4499"),
-  c("#332288", "#6699CC", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#882255", "#AA4499"),
-  c("#332288", "#6699CC", "#88CCEE", "#44AA99", "#117733", "#999933", "#DDCC77", "#661100", "#CC6677", "#AA4466", "#882255", "#AA4499")
+  c(
+    "#332288",
+    "#88CCEE",
+    "#44AA99",
+    "#117733",
+    "#DDCC77",
+    "#CC6677",
+    "#AA4499"
+  ),
+  c(
+    "#332288",
+    "#88CCEE",
+    "#44AA99",
+    "#117733",
+    "#999933",
+    "#DDCC77",
+    "#CC6677",
+    "#AA4499"
+  ),
+  c(
+    "#332288",
+    "#88CCEE",
+    "#44AA99",
+    "#117733",
+    "#999933",
+    "#DDCC77",
+    "#CC6677",
+    "#882255",
+    "#AA4499"
+  ),
+  c(
+    "#332288",
+    "#88CCEE",
+    "#44AA99",
+    "#117733",
+    "#999933",
+    "#DDCC77",
+    "#661100",
+    "#CC6677",
+    "#882255",
+    "#AA4499"
+  ),
+  c(
+    "#332288",
+    "#6699CC",
+    "#88CCEE",
+    "#44AA99",
+    "#117733",
+    "#999933",
+    "#DDCC77",
+    "#661100",
+    "#CC6677",
+    "#882255",
+    "#AA4499"
+  ),
+  c(
+    "#332288",
+    "#6699CC",
+    "#88CCEE",
+    "#44AA99",
+    "#117733",
+    "#999933",
+    "#DDCC77",
+    "#661100",
+    "#CC6677",
+    "#AA4466",
+    "#882255",
+    "#AA4499"
+  )
 )
 
 
@@ -376,8 +948,21 @@ colour_list <- list(
 #' @importFrom xml2 xml_attr<- xml_remove
 #' @method format ms_chart
 #' @export
-format.ms_chart <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data = FALSE, ...) {
-  str_ <- to_pml(x, id_x = id_x, id_y = id_y, sheetname = sheetname, asis = x$asis)
+format.ms_chart <- function(
+  x,
+  id_x,
+  id_y,
+  sheetname = "sheet1",
+  drop_ext_data = FALSE,
+  ...
+) {
+  str_ <- to_pml(
+    x,
+    id_x = id_x,
+    id_y = id_y,
+    sheetname = sheetname,
+    secondary_y = 0
+  )
 
   if (is.null(x$x_axis$num_fmt)) {
     x$x_axis$num_fmt <- x$theme[[x$fmt_names$x]]
@@ -386,29 +971,139 @@ format.ms_chart <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data =
     x$y_axis$num_fmt <- x$theme[[x$fmt_names$y]]
   }
 
-  x_axis_str <- axis_content_xml(x$x_axis,
-    id = id_x, theme = x$theme,
-    cross_id = id_y, is_x = TRUE,
-    lab = htmlEscape(x$labels$x), rot = x$theme$title_x_rot
+  x_axis_str <- x$axis_x_xml(
+    x$x_axis,
+    id = id_x,
+    theme = x$theme,
+    cross_id = id_y,
+    is_x = TRUE,
+    lab = htmlEscape(x$labels$x),
+    rot = x$theme$title_x_rot
   )
 
   x_axis_str <- sprintf("<%s>%s</%s>", x$axis_tag$x, x_axis_str, x$axis_tag$x)
 
-  y_axis_str <- axis_content_xml(x$y_axis,
-    id = id_y, theme = x$theme,
-    cross_id = id_x, is_x = FALSE,
-    lab = htmlEscape(x$labels$y), rot = x$theme$title_y_rot
+  y_axis_str <- x$axis_y_xml(
+    x$y_axis,
+    id = id_y,
+    theme = x$theme,
+    cross_id = id_x,
+    is_x = FALSE,
+    lab = htmlEscape(x$labels$y),
+    rot = x$theme$title_y_rot
   )
 
   y_axis_str <- sprintf("<%s>%s</%s>", x$axis_tag$y, y_axis_str, x$axis_tag$y)
 
+  secondary <- TRUE # logical will become FALSE if secondary axis are created
 
-  table_str <- table_content_xml(x)
+  ids <- as.integer(id_x) + c(1111L, 2222L, 3333L, 4444L)
+
+  axis_str <- paste0(x_axis_str, y_axis_str)
+
+  if (length(x$secondary)) {
+    ser_id <- length(x$yvar) + 1L
+
+    for (sec in seq_along(x$secondary)) {
+      is_sec_x <- isTRUE(attr(x$secondary[[sec]], "secondary_x"))
+      is_sec_y <- isTRUE(attr(x$secondary[[sec]], "secondary_y"))
+
+      # charts reference their axis via this id
+      if (is_sec_y || is_sec_x) {
+        x_id <- as.character(ids[1])
+        y_id <- as.character(ids[2])
+      } else {
+        x_id <- id_x
+        y_id <- id_y
+      }
+
+      xlab <- if (is_sec_x && !is_sec_y) {
+        htmlEscape(x$secondary[[sec]]$labels$x)
+      } else {
+        NULL
+      }
+      ylab <- if (is_sec_y && !is_sec_x) {
+        htmlEscape(x$secondary[[sec]]$labels$y)
+      } else {
+        NULL
+      }
+
+      # add only one secondary x and y axis if required
+      if (secondary && (is_sec_x || is_sec_y)) {
+        axis_l_str <- axis_content_xml(
+          x$secondary[[sec]]$y_axis,
+          id = y_id,
+          theme = x$secondary[[sec]]$theme,
+          cross_id = x_id,
+          is_x = FALSE,
+          lab = ylab,
+          rot = x$secondary[[sec]]$theme$title_y_rot
+        )
+
+        x_axis_str <- sprintf(
+          "<%s>%s</%s>",
+          x$secondary[[sec]]$axis_tag$y,
+          axis_l_str,
+          x$secondary[[sec]]$axis_tag$y
+        )
+
+        axis_r_str <- axis_content_xml(
+          x$secondary[[sec]]$x_axis,
+          id = x_id,
+          theme = x$secondary[[sec]]$theme,
+          cross_id = y_id,
+          is_x = TRUE,
+          lab = xlab
+        )
+        y_axis_str <- sprintf(
+          "<%s>%s</%s>",
+          x$secondary[[sec]]$axis_tag$x,
+          axis_r_str,
+          x$secondary[[sec]]$axis_tag$x
+        )
+
+        secondary <- FALSE
+
+        axis_str <- paste0(axis_str, x_axis_str, y_axis_str)
+      }
+
+      # all secondary charts
+      str_ <- paste0(
+        str_,
+        to_pml(
+          x$secondary[[sec]],
+          id_y = y_id,
+          id_x = x_id,
+          sheetname = sheetname,
+          secondary_y = ser_id
+        )
+      )
+
+      ser_id <- ser_id + length(x$secondary[[sec]]$yvar)
+    }
+  }
+
+  if (inherits(x, "ms_piechart")) {
+    axis_str <- ""
+    table_str <- ""
+  } else {
+    table_str <- table_content_xml(x)
+  }
 
   sppr_str <- sppr_content_xml(x$theme, "plot")
 
   ns <- "xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
-  xml_elt <- paste0("<c:plotArea ", ns, "><c:layout/>", str_, x_axis_str, y_axis_str, table_str, sppr_str, "</c:plotArea>")
+
+  xml_elt <- paste0(
+    "<c:plotArea ",
+    ns,
+    "><c:layout/>",
+    str_,
+    axis_str,
+    table_str,
+    sppr_str,
+    "</c:plotArea>"
+  )
   xml_doc <- read_xml(system.file(package = "mschart", "template", "chart.xml"))
 
   node <- xml_find_first(xml_doc, "//c:plotArea")
@@ -417,9 +1112,15 @@ format.ms_chart <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data =
   if (!is.null(x$labels[["title"]])) {
     chartnode <- xml_find_first(xml_doc, "//c:chart")
     title_ <- "<c:title %s><c:tx><c:rich><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr/></a:pPr><a:r>%s<a:t>%s</a:t></a:r></a:p></c:rich></c:tx><c:layout/><c:overlay val=\"0\"/></c:title>"
-    title_ <- sprintf(title_, ns, format(x$theme[["main_title"]], type = "pml"), htmlEscape(x$labels[["title"]]))
+    title_ <- sprintf(
+      title_,
+      ns,
+      format(x$theme[["main_title"]], type = "pml"),
+      htmlEscape(x$labels[["title"]])
+    )
     xml_add_child(chartnode, as_xml_document(title_), .where = 0)
-  } else { # null is not enough
+  } else {
+    # null is not enough
     atd_node <- xml_find_first(xml_doc, "//c:chart/c:autoTitleDeleted")
     xml_attr(atd_node, "val") <- "1"
   }
@@ -430,6 +1131,30 @@ format.ms_chart <- function(x, id_x, id_y, sheetname = "sheet1", drop_ext_data =
   } else {
     legend_pos <- xml_find_first(xml_doc, "//c:chart/c:legend/c:legendPos")
     xml_attr(legend_pos, "val") <- x$theme[["legend_position"]]
+
+    # manual layout for the legend box (x / y / w / h, all fractional)
+    lx <- x$theme[["legend_x"]]
+    ly <- x$theme[["legend_y"]]
+    lw <- x$theme[["legend_w"]]
+    lh <- x$theme[["legend_h"]]
+    if (!is.null(lx) || !is.null(ly) || !is.null(lw) || !is.null(lh)) {
+      ns_layout <- paste(
+        "xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\"",
+        "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""
+      )
+      manual <- paste0(
+        "<c:layout ", ns_layout, "><c:manualLayout>",
+        "<c:xMode val=\"edge\"/>",
+        "<c:yMode val=\"edge\"/>",
+        if (!is.null(lx)) sprintf("<c:x val=\"%g\"/>", lx),
+        if (!is.null(ly)) sprintf("<c:y val=\"%g\"/>", ly),
+        if (!is.null(lw)) sprintf("<c:w val=\"%g\"/>", lw),
+        if (!is.null(lh)) sprintf("<c:h val=\"%g\"/>", lh),
+        "</c:manualLayout></c:layout>"
+      )
+      layout_node <- xml_find_first(xml_doc, "//c:chart/c:legend/c:layout")
+      xml_replace(layout_node, as_xml_document(manual))
+    }
 
     rpr <- format(x$theme[["legend_text"]], type = "pml")
     rpr <- gsub("a:rPr", "a:defRPr", rpr)

@@ -2,26 +2,32 @@
 % Please edit documentation in R/ms_chart.R
 \name{ms_barchart}
 \alias{ms_barchart}
-\title{barchart object}
+\title{Barchart object}
 \usage{
 ms_barchart(data, x, y, group = NULL, labels = NULL, asis = FALSE)
 }
 \arguments{
 \item{data}{a data.frame}
 
-\item{x}{x colname}
+\item{x}{column name for x values.}
 
-\item{y}{y colname}
+\item{y}{column name for y values.}
 
-\item{group}{grouping colname used to split data into series. Optional.}
+\item{group}{grouping column name used to split data into series. Optional.}
 
-\item{labels}{colnames of columns to be used as labels into series. Optional.
-If more than a name, only the first one will be used as label, but all
+\item{labels}{column names of columns to be used as custom data labels
+displayed next to data points (not axis labels). Optional.
+If more than one name is provided, only the first one will be used as a label, but all
 labels (transposed if a group is used) will be available in the Excel file
 associated with the chart.}
 
-\item{asis}{bool parameter defaulting to FALSE. If TRUE the data will not be
-modified.}
+\item{asis}{logical parameter defaulting to FALSE. When FALSE, the data is
+reshaped internally so that each series becomes a separate column. When TRUE,
+the data is used as-is and must already have one column for categories and
+one column per series.}
+}
+\value{
+An \code{ms_chart} object.
 }
 \description{
 Creation of a barchart object that can be
@@ -77,6 +83,7 @@ chart_01 <- chart_ax_y(
   x = chart_01, cross_between = "midCat",
   major_tick_mark = "in"
 )
+# print(chart_01, preview = TRUE)
 
 
 # example chart 02 -------
@@ -89,6 +96,7 @@ dat <- data.frame(
 chart_02 <- ms_barchart(data = dat, x = "Species", y = "mean")
 chart_02 <- chart_settings(x = chart_02, dir = "horizontal")
 chart_02 <- chart_theme(x = chart_02, title_x_rot = 270, title_y_rot = 0)
+# print(chart_02, preview = TRUE)
 
 
 
@@ -123,8 +131,27 @@ chart_03 <- chart_data_labels(chart_03,
   position = "ctr",
   show_val = TRUE
 )
-chart_03 <- chart_labels_text(chart_03, fp_text(color = "white", bold = TRUE, font.size = 9))
-
+chart_03 <- chart_labels_text(chart_03,
+  fp_text(color = "white", bold = TRUE, font.size = 9)
+)
+chart_03 <- chart_data_fill(chart_03,
+  values = c(
+    serie1 = "#4477AA",
+    serie2 = "#CC6677",
+    serie3 = "#DDCC77"
+  )
+)
+chart_03 <- chart_data_stroke(chart_03,
+  values = c(
+    serie1 = "#223B55",
+    serie2 = "#66333C",
+    serie3 = "#6F663C"
+  )
+)
+chart_03 <- chart_data_line_width(chart_03,
+  values = c(serie1 = 2, serie2 = 2, serie3 = 2)
+)
+# print(chart_03, preview = TRUE)
 
 # example chart 04 -------
 
@@ -180,6 +207,7 @@ chart_04 <- chart_settings(chart_04,
 chart_04 <- chart_data_labels(chart_04, position = "outEnd")
 chart_04 <- chart_labels_text(chart_04, text_prop)
 chart_04 <- chart_theme(chart_04, title_x_rot = 270, title_y_rot = 0)
+# print(chart_04, preview = TRUE)
 
 # example chart 05 -------
 
@@ -203,6 +231,7 @@ chart_05 <- chart_settings(chart_05,
 )
 chart_05 <- chart_data_labels(chart_05, position = "outEnd")
 chart_05 <- chart_labels_text(chart_05, text_prop)
+# print(chart_05, preview = TRUE)
 
 # example chart 06 -------
 chart_06 <- ms_barchart(
@@ -214,8 +243,25 @@ chart_06 <- chart_settings(chart_06,
 )
 chart_06 <- chart_data_labels(chart_06, position = "outEnd")
 chart_06 <- chart_labels_text(chart_06, text_prop)
+# print(chart_06, preview = TRUE)
 
 
+# example chart 07 -------
+# Series order (and therefore legend order) follows the levels of
+# the `group` factor. Convert the column to a factor with the desired
+# level order before passing it to ms_barchart().
+ordered_data <- browser_data
+ordered_data$serie <- factor(ordered_data$serie,
+  levels = c("serie3", "serie1", "serie2")
+)
+chart_07 <- ms_barchart(
+  data = ordered_data, x = "browser",
+  y = "value", group = "serie"
+)
+chart_07 <- chart_labels(chart_07,
+  title = "Series and legend ordered via factor levels"
+)
+# print(chart_07, preview = TRUE)
 }
 \seealso{
 \code{\link[=chart_settings]{chart_settings()}}, \code{\link[=chart_ax_x]{chart_ax_x()}}, \code{\link[=chart_ax_y]{chart_ax_y()}},
@@ -223,7 +269,12 @@ chart_06 <- chart_labels_text(chart_06, text_prop)
 
 Other 'Office' chart objects: 
 \code{\link{ms_areachart}()},
+\code{\link{ms_bubblechart}()},
+\code{\link{ms_chart_combine}()},
 \code{\link{ms_linechart}()},
-\code{\link{ms_scatterchart}()}
+\code{\link{ms_piechart}()},
+\code{\link{ms_radarchart}()},
+\code{\link{ms_scatterchart}()},
+\code{\link{ms_stockchart}()}
 }
 \concept{'Office' chart objects}

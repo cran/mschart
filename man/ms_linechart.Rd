@@ -2,26 +2,32 @@
 % Please edit documentation in R/ms_chart.R
 \name{ms_linechart}
 \alias{ms_linechart}
-\title{linechart object}
+\title{Linechart object}
 \usage{
 ms_linechart(data, x, y, group = NULL, labels = NULL, asis = FALSE)
 }
 \arguments{
 \item{data}{a data.frame}
 
-\item{x}{x colname}
+\item{x}{column name for x values.}
 
-\item{y}{y colname}
+\item{y}{column name for y values.}
 
-\item{group}{grouping colname used to split data into series. Optional.}
+\item{group}{grouping column name used to split data into series. Optional.}
 
-\item{labels}{colnames of columns to be used as labels into series. Optional.
-If more than a name, only the first one will be used as label, but all
+\item{labels}{column names of columns to be used as custom data labels
+displayed next to data points (not axis labels). Optional.
+If more than one name is provided, only the first one will be used as a label, but all
 labels (transposed if a group is used) will be available in the Excel file
 associated with the chart.}
 
-\item{asis}{bool parameter defaulting to FALSE. If TRUE the data will not be
-modified.}
+\item{asis}{logical parameter defaulting to FALSE. When FALSE, the data is
+reshaped internally so that each series becomes a separate column. When TRUE,
+the data is used as-is and must already have one column for categories and
+one column per series.}
+}
+\value{
+An \code{ms_chart} object.
 }
 \description{
 Creation of a linechart object that can be
@@ -123,6 +129,11 @@ chart_03 <- chart_table(chart_03,
 Other 'Office' chart objects: 
 \code{\link{ms_areachart}()},
 \code{\link{ms_barchart}()},
-\code{\link{ms_scatterchart}()}
+\code{\link{ms_bubblechart}()},
+\code{\link{ms_chart_combine}()},
+\code{\link{ms_piechart}()},
+\code{\link{ms_radarchart}()},
+\code{\link{ms_scatterchart}()},
+\code{\link{ms_stockchart}()}
 }
 \concept{'Office' chart objects}

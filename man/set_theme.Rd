@@ -4,7 +4,7 @@
 \alias{set_theme}
 \alias{mschart_theme}
 \alias{chart_theme}
-\title{set chart theme}
+\title{Set chart theme}
 \usage{
 set_theme(x, value)
 
@@ -38,7 +38,11 @@ mschart_theme(
   str_fmt = "General",
   double_fmt = "#,##0.00",
   integer_fmt = "0",
-  legend_position = "b"
+  legend_position = "b",
+  legend_x = NULL,
+  legend_y = NULL,
+  legend_w = NULL,
+  legend_h = NULL
 )
 
 chart_theme(
@@ -66,7 +70,11 @@ chart_theme(
   str_fmt,
   double_fmt,
   integer_fmt,
-  legend_position
+  legend_position,
+  legend_x,
+  legend_y,
+  legend_w,
+  legend_h
 )
 }
 \arguments{
@@ -110,6 +118,20 @@ chart_theme(
 
 \item{legend_position}{it specifies the position of the legend. It should be
 one of 'b', 'tr', 'l', 'r', 't', 'n' (for 'none').}
+
+\item{legend_x, legend_y, legend_w, legend_h}{optional fractions between
+0 and 1 to manually position and size the legend box within the chart
+area. Each value is a fraction of the chart width (\code{legend_x},
+\code{legend_w}) or height (\code{legend_y}, \code{legend_h}). Any \code{NULL} value
+keeps the default automatic layout; setting at least one triggers
+manual placement via \verb{<c:manualLayout>}.}
+}
+\value{
+An \code{ms_chart} object.
+
+An \code{mschart_theme} object (for \code{mschart_theme()}).
+
+An \code{ms_chart} object (for \code{set_theme()} and \code{chart_theme()}).
 }
 \description{
 Modify chart theme with function \code{set_theme}.
@@ -123,7 +145,7 @@ library(officer)
 mytheme <- mschart_theme(
   axis_title = fp_text(color = "red", font.size = 24, bold = TRUE),
   grid_major_line_y = fp_border(width = 1, color = "orange"),
-  axis_ticks_y = fp_border(width = .4, color = "gray")
+  axis_ticks_y = fp_border(width = 0.4, color = "gray")
 )
 
 
@@ -137,14 +159,24 @@ my_bc <- chart_settings(my_bc,
 )
 my_bc <- set_theme(my_bc, mytheme)
 
-
-
 my_bc_2 <- ms_barchart(
   data = browser_data, x = "browser",
   y = "value", group = "serie"
 )
 my_bc_2 <- chart_theme(my_bc_2,
-  grid_major_line_y = fp_border(width = .5, color = "cyan")
+  grid_major_line_y = fp_border(width = 0.5, color = "cyan")
+)
+
+# Manual legend layout: place the legend in the top-right corner
+# using fractions of the chart area (0 to 1).
+my_bc_3 <- ms_barchart(
+  data = browser_data, x = "browser",
+  y = "value", group = "serie"
+)
+my_bc_3 <- chart_theme(my_bc_3,
+  legend_position = "r",
+  legend_x = 0.80, legend_y = 0.15,
+  legend_w = 0.18, legend_h = 0.30
 )
 }
 \seealso{

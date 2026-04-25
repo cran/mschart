@@ -65,7 +65,8 @@ dcast_data <- function(data, x, y, group) {
   out <- dcast.data.table(
     dataset,
     formula = as.formula(form_str),
-    fill = NA, value.var = y
+    fill = NA,
+    value.var = y
   )
   out$.fake_id. <- NULL
   setDF(out)
@@ -78,6 +79,14 @@ transpose_series_bysplit <- function(x) {
     vars <- c(x$x, x$y)
     out <- transpose_data(x$data, vars, x$group)
     group_names <- setdiff(colnames(out), x$x)
+    if (!is.null(x$size_cols)) {
+      for (sz in x$size_cols) {
+        data_sz <- transpose_data(x$data, c(x$x, sz), x$group)
+        data_sz[[1]] <- NULL
+        names(data_sz) <- paste0(sz, "-", names(data_sz))
+        out <- cbind(out, data_sz)
+      }
+    }
     if (!is.null(x$label_cols)) {
       for (lab in x$label_cols) {
         data_label <- transpose_data(x$data, c(x$x, lab), x$group)
@@ -87,13 +96,11 @@ transpose_series_bysplit <- function(x) {
       }
     }
   } else {
-    vars <- c(x$x, x$y, x$label_cols)
+    vars <- c(x$x, x$y, x$size_cols, x$label_cols)
     out <- x$data[, vars]
   }
   out
 }
-
-
 
 
 #' @importFrom stats as.formula
@@ -103,7 +110,12 @@ shape_as_series <- function(x) {
     out <- dcast_data(data = x$data, x = x$x, y = x$y, group = x$group)
     if (!is.null(x$label_cols)) {
       for (lab in x$label_cols) {
-        data_label <- dcast_data(data = x$data, x = x$x, y = lab, group = x$group)
+        data_label <- dcast_data(
+          data = x$data,
+          x = x$x,
+          y = lab,
+          group = x$group
+        )
         data_label[[1]] <- NULL
         names(data_label) <- paste0(lab, "-", names(data_label))
         out <- cbind(out, data_label)

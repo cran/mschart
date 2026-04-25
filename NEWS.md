@@ -1,3 +1,68 @@
+# mschart 0.4.2
+
+## Highlights
+
+* Four new chart types: pie / doughnut (`ms_piechart()`), bubble
+  (`ms_bubblechart()`), radar (`ms_radarchart()`) and stock charts with
+  HLC and OHLC candlesticks (`ms_stockchart()`).
+* Combine several chart types (e.g. bars + lines) on a single chart,
+  with optional secondary axis, via `ms_chart_combine()`.
+* Drop a chart into an Excel sheet with `officer::sheet_add_drawing()`;
+  chart data is written into the sheet and linked automatically.
+
+## New features
+
+### Charts
+
+* Line charts can now be stacked or percent-stacked
+  (`chart_settings(grouping = ...)`).
+* Stock charts gain the data-table option already available on
+  bar / line / area charts (`chart_settings(table = TRUE)`).
+
+### Axes, theme and legend
+
+* Control axis interval spacing via `major_unit`, `minor_unit`,
+  `major_time_unit` and `minor_time_unit` (#105).
+* Position and size the legend manually with `legend_x`, `legend_y`,
+  `legend_w`, `legend_h` in `mschart_theme()` / `chart_theme()` (#38).
+* Disable grid lines by setting `grid_major_line_x` / `_y` or
+  `grid_minor_line_x` / `_y` to `FALSE`.
+
+### Series styling
+
+* `chart_data_fill()` updates the matching stroke colour by default,
+  so one call produces a filled shape with a matching border. Opt out
+  with `update_stroke = FALSE`.
+
+### Validation and warnings
+
+* Series styling functions now warn when applied to a chart type that
+  does not support the property (see `?mschart` for the supported
+  matrix).
+* `chart_settings(table = TRUE)` warns instead of being silently
+  ignored on chart types without a data table (scatter, radar, bubble,
+  pie).
+* `chart_labels()` validates `title`, `xlab` and `ylab`: each must be
+  `NULL` or a single non-NA string.
+
+## Bug fixes
+
+* Thin lines below 1pt (0.25, 0.5, 0.75) are rendered on
+  `ms_scatterchart` like on other chart types.
+* `chart_data_line_style("none")` actually hides the line (#91, #99,
+  thanks Stefan Moog).
+* Theme number formats (`date_fmt`, `double_fmt`, ...) are applied to
+  axes again.
+* `chart_data_smooth()` resolves the right series.
+* `chart_settings()` no longer resets unrelated options when called
+  with partial parameters (linechart, areachart, scatterchart).
+* Fixed example in `?chart_data_size`.
+
+## Breaking changes
+
+* `chart_settings()` on `ms_bubblechart` no longer accepts `style` —
+  it was silently ignored before. Remove the argument from your code.
+
 # mschart 0.4.1
 
 ## Issues
@@ -17,12 +82,12 @@ new theme `theme_ggplot2()`.
 ## New features
 
 * Support for openxlsx2 by Jan Marvin Garbuszus
-* option to add table of data below corresponding levels by Marlon Molina
+* option to add a table of data below the chart by Marlon Molina
 
 ## Issues
 
 * fix issue with % in labels of the graphic
-* stop reordering data when a group is used, user is expected to 
+* stop reordering data when a group is used; the user is expected to
 do it before sending the data to mschart.
 
 # mschart 0.3.1
@@ -106,9 +171,9 @@ do it before sending the data to mschart.
 
 * added argument `legend_text` to theme function
 * legend can be dropped now
-* `ms_linechart` now accept non numeric x axis.
+* `ms_linechart` now accepts a non-numeric x axis.
 
 
 # mschart 0.2.1
 
-* Fix issue that made file *corrupted* when data has missing values
+* Fix issue that corrupted the file when data had missing values

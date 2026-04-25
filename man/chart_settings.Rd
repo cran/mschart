@@ -6,38 +6,57 @@
 \alias{chart_settings.ms_linechart}
 \alias{chart_settings.ms_areachart}
 \alias{chart_settings.ms_scatterchart}
-\title{set chart options}
+\alias{chart_settings.ms_stockchart}
+\alias{chart_settings.ms_radarchart}
+\alias{chart_settings.ms_bubblechart}
+\alias{chart_settings.ms_piechart}
+\title{Set chart options}
 \usage{
 chart_settings(x, ...)
 
 \method{chart_settings}{ms_barchart}(x, vary_colors, gap_width, dir, grouping, overlap, table, ...)
 
-\method{chart_settings}{ms_linechart}(x, vary_colors, style = "lineMarker", table, ...)
+\method{chart_settings}{ms_linechart}(x, vary_colors, style, grouping, table, ...)
 
-\method{chart_settings}{ms_areachart}(
+\method{chart_settings}{ms_areachart}(x, vary_colors, grouping, table, ...)
+
+\method{chart_settings}{ms_scatterchart}(x, vary_colors, style, ...)
+
+\method{chart_settings}{ms_stockchart}(
   x,
-  vary_colors = FALSE,
-  grouping = "standard",
-  table = FALSE,
+  vary_colors,
+  table,
+  hi_low_lines,
+  up_bars_fill,
+  up_bars_border,
+  down_bars_fill,
+  down_bars_border,
   ...
 )
 
-\method{chart_settings}{ms_scatterchart}(x, vary_colors = FALSE, style = "marker", ...)
+\method{chart_settings}{ms_radarchart}(x, vary_colors, style, ...)
+
+\method{chart_settings}{ms_bubblechart}(x, vary_colors, bubble3D = FALSE, ...)
+
+\method{chart_settings}{ms_piechart}(x, vary_colors, hole_size, ...)
 }
 \arguments{
 \item{x}{an \code{ms_chart} object.}
 
 \item{...}{unused parameter}
 
-\item{vary_colors}{if \code{TRUE} the data points in the single series are displayed the same color.}
+\item{vary_colors}{if \code{TRUE}, each data point in a single series is displayed in a different color.}
 
 \item{gap_width}{A gap appears between the bar or clustered bars for each category on a bar chart.
 The default width for this gap is 150 percent of the bar width. It can be set
 between 0 and 500 percent of the bar width.}
 
-\item{dir}{the direction of the bars in the chart, value must one of "horizontal" or "vertical".}
+\item{dir}{the direction of the bars in the chart, value must be one of "horizontal" or "vertical".}
 
-\item{grouping}{grouping for a barchart, a linechart or an area chart. must be one of "percentStacked", "clustered", "standard" or "stacked".}
+\item{grouping}{grouping of the series. For a barchart one of
+"percentStacked", "clustered", "standard" or "stacked". For a
+linechart or an areachart one of "percentStacked", "standard" or
+"stacked" ("clustered" is bar-only).}
 
 \item{overlap}{In a bar chart having two or more series, the bars for each
 category are clustered together. By default, these bars are directly
@@ -52,6 +71,26 @@ to be superimposed. The default value is 0.}
 
 \item{style}{Style for the linechart or scatterchart type of markers. One
 of 'none', 'line', 'lineMarker', 'marker', 'smooth', 'smoothMarker'.}
+
+\item{hi_low_lines}{an \code{\link[officer:fp_border]{officer::fp_border()}} for the high-low lines.
+Set to \code{FALSE} to hide them.}
+
+\item{up_bars_fill}{fill colour for up bars (OHLC only, close > open).}
+
+\item{up_bars_border}{an \code{\link[officer:fp_border]{officer::fp_border()}} for up bar borders.}
+
+\item{down_bars_fill}{fill colour for down bars (OHLC only, close < open).}
+
+\item{down_bars_border}{an \code{\link[officer:fp_border]{officer::fp_border()}} for down bar borders.}
+
+\item{bubble3D}{logical, use 3D effect for bubbles.}
+
+\item{hole_size}{size of the hole in a doughnut chart, between 0 and 90
+(percent of the radius). Default 0 produces a pie chart;
+values above 0 produce a doughnut chart.}
+}
+\value{
+An \code{ms_chart} object.
 }
 \description{
 Set chart properties.
@@ -62,9 +101,17 @@ Set chart properties.
 
 \item \code{chart_settings(ms_linechart)}: linechart settings
 
-\item \code{chart_settings(ms_areachart)}: linechart settings
+\item \code{chart_settings(ms_areachart)}: areachart settings
 
-\item \code{chart_settings(ms_scatterchart)}: linechart settings
+\item \code{chart_settings(ms_scatterchart)}: scatterchart settings
+
+\item \code{chart_settings(ms_stockchart)}: stockchart settings
+
+\item \code{chart_settings(ms_radarchart)}: radarchart settings
+
+\item \code{chart_settings(ms_bubblechart)}: bubblechart settings
+
+\item \code{chart_settings(ms_piechart)}: piechart settings
 
 }}
 \section{Illustrations}{

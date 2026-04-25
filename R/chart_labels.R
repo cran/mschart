@@ -3,7 +3,11 @@
 #' @description Add labels to a chart, labels can be specified for
 #' x axis, y axis and plot.
 #' @param x an `ms_chart` object.
-#' @param title,xlab,ylab Text to add
+#' @param title title of the chart (displayed above the plot area). Use NULL to remove it.
+#' @param xlab label for the x axis. Use NULL to remove it.
+#' @param ylab label for the y axis. Use NULL to remove it.
+#' @return An `ms_chart` object.
+#' @seealso [chart_data_labels()], [chart_ax_x()], [chart_ax_y()]
 #' @examples
 #' mylc <- ms_linechart(
 #'   data = browser_ts, x = "date", y = "freq",
@@ -14,6 +18,10 @@
 #'   ylab = "my y label"
 #' )
 chart_labels <- function(x, title = NULL, xlab = NULL, ylab = NULL) {
+  validate_label(title, "title")
+  validate_label(xlab, "xlab")
+  validate_label(ylab, "ylab")
+
   if (!is.null(title)) {
     x$labels[["title"]] <- title
   } else {
@@ -32,4 +40,17 @@ chart_labels <- function(x, title = NULL, xlab = NULL, ylab = NULL) {
     x$labels[["y"]] <- NULL
   }
   x
+}
+
+validate_label <- function(value, name) {
+  if (is.null(value)) {
+    return(invisible(NULL))
+  }
+  if (!is.character(value) || length(value) != 1 || is.na(value)) {
+    stop(
+      "`", name, "` must be NULL or a single non-NA character string.",
+      call. = FALSE
+    )
+  }
+  invisible(NULL)
 }

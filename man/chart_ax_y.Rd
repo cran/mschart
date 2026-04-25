@@ -2,7 +2,7 @@
 % Please edit documentation in R/axis_setting.R
 \name{chart_ax_y}
 \alias{chart_ax_y}
-\title{y axis settings}
+\title{Y axis settings}
 \usage{
 chart_ax_y(
   x,
@@ -18,7 +18,10 @@ chart_ax_y(
   limit_min,
   limit_max,
   position,
-  second_axis = FALSE
+  major_unit,
+  minor_unit,
+  major_time_unit,
+  minor_time_unit
 )
 }
 \arguments{
@@ -41,18 +44,31 @@ one of 'cross', 'in', 'none', 'out'.}
 \item{display}{should the axis be displayed (a logical of
 length 1).}
 
-\item{num_fmt}{number formatting. See section for more details.}
+\item{num_fmt}{number formatting. See the num_fmt section for more details.}
 
 \item{rotation}{rotation angle. Value should be between \code{-360}
 and \code{360}.}
 
-\item{limit_min}{minimum value on the axis.}
+\item{limit_min}{minimum value on the axis. Date objects are also accepted
+and will be converted automatically.}
 
-\item{limit_max}{maximum value on the axis.}
+\item{limit_max}{maximum value on the axis. Date objects are also accepted
+and will be converted automatically.}
 
-\item{position}{position value that cross the other axis.}
+\item{position}{the value at which this axis crosses the perpendicular axis.}
 
-\item{second_axis}{unused}
+\item{major_unit}{numeric, interval between major ticks and gridlines.}
+
+\item{minor_unit}{numeric, interval between minor ticks and gridlines.}
+
+\item{major_time_unit}{time unit for major ticks on date axes,
+one of \code{"days"}, \code{"months"}, \code{"years"}.}
+
+\item{minor_time_unit}{time unit for minor ticks on date axes,
+one of \code{"days"}, \code{"months"}, \code{"years"}.}
+}
+\value{
+An \code{ms_chart} object.
 }
 \description{
 Define settings for a y axis.
@@ -65,10 +81,10 @@ Define settings for a y axis.
 
 \section{num_fmt}{
 
-All \verb{\%} need to be doubled, \verb{0\%\%} mean "a number
+All \verb{\%} need to be doubled, \verb{0\%\%} means "a number
 and percent symbol".
 
-From my actual knowledge, depending on some chart type
+To my current knowledge, depending on the chart type
 and options, the following values are not systematically
 used by office chart engine; i.e. when chart pre-compute
 percentages, it seems using \verb{0\%\%} will have no
@@ -78,7 +94,7 @@ effect.
 \item \code{0}: display the number with no decimal
 \item \code{0.00}: display the number with two decimals
 \item \verb{0\%\%}: display as percentages
-\item \verb{0.00\%\%}: display as percentages with two digits
+\item \verb{0.00\%\%}: display as percentages with two decimal places
 \item \verb{#,##0}
 \item \verb{#,##0.00}
 \item \code{0.00E+00}

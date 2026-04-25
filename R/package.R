@@ -1,6 +1,6 @@
-#' @title Chart Generation for 'Microsoft Word' and 'Microsoft PowerPoint' Documents
+#' @title Chart Generation for 'Microsoft Word', 'Microsoft Excel' and 'Microsoft PowerPoint' Documents
 #'
-#' @description It lets R users to create Microsoft Office charts from data, and
+#' @description It lets R users create Microsoft Office charts from data, and
 #' then add title, legends, and annotations to the chart object.
 #'
 #' The graph produced is a Microsoft graph, which means that it can be edited in
@@ -11,14 +11,21 @@
 #' often used to industrialize graphs that are then consumed and annotated by non-R
 #' users.
 #'
-#' The following charts are the only available from all possible MS charts:
+#' The following chart types are available:
 #'
-#' * barcharts: [ms_barchart()]
+#' * bar charts: [ms_barchart()]
 #' * line charts: [ms_linechart()]
 #' * scatter plots: [ms_scatterchart()]
 #' * area charts: [ms_areachart()]
+#' * pie and doughnut charts: [ms_piechart()]
+#' * bubble charts: [ms_bubblechart()]
+#' * radar (spider) charts: [ms_radarchart()]
+#' * stock charts (HLC and OHLC): [ms_stockchart()]
 #'
-#' These functions are creating a 'chart' object, it can be customized;
+#' Several chart types can be combined on a single chart, with an
+#' optional secondary axis, using [ms_chart_combine()].
+#'
+#' These functions create a 'chart' object that can be customized:
 #'
 #' * by using options specific to the chart (with [chart_settings()]),
 #' * by changing the options related to the axes (with [chart_ax_x()] and [chart_ax_y()]),
@@ -39,8 +46,27 @@
 #'
 #' You can add a chart into a Word document with function [body_add_chart()].
 #'
+#' You can add a chart into an Excel sheet with function [sheet_add_drawing.ms_chart()].
+#'
+#'
+#' ## Series styling properties by chart type
+#'
+#' Not all series styling properties have an effect on every
+#' chart type. The following table shows which properties are
+#' supported. A warning is emitted when a property is set on
+#' a chart type that does not support it.
+#'
+#' | Property | bar | line | area | scatter | stock | radar | bubble | pie |
+#' |:-----------|:---:|:----:|:----:|:-------:|:-----:|:-----:|:------:|:---:|
+#' | fill       | x   | x    | x    | x       | x     | x     | x      | x   |
+#' | colour     | x   | x    | x    | x       | x     | x     | x      | x   |
+#' | symbol     |     | x    |      | x       | x     | x     |        |     |
+#' | size       |     | x    |      | x       | x     | x     |        |     |
+#' | line_width | x   | x    | x    | x       | x     | x     | x      | x   |
+#' | line_style |     | x    |      | x       | x     | x     |        |     |
+#' | smooth     |     | x    |      | x       |       |       |        |     |
+#' | labels_fp  | x   | x    | x    | x       |       | x     |        | x   |
 #'
 #' @seealso \url{https://ardata-fr.github.io/officeverse/}
-#' @docType package
 #' @name mschart
 "_PACKAGE"

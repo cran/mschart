@@ -4,9 +4,9 @@
 \name{mschart}
 \alias{mschart-package}
 \alias{mschart}
-\title{Chart Generation for 'Microsoft Word' and 'Microsoft PowerPoint' Documents}
+\title{Chart Generation for 'Microsoft Word', 'Microsoft Excel' and 'Microsoft PowerPoint' Documents}
 \description{
-It lets R users to create Microsoft Office charts from data, and
+It lets R users create Microsoft Office charts from data, and
 then add title, legends, and annotations to the chart object.
 
 The graph produced is a Microsoft graph, which means that it can be edited in
@@ -17,15 +17,22 @@ allows only a subset of the charts possible with 'Office Chart'. The package is
 often used to industrialize graphs that are then consumed and annotated by non-R
 users.
 
-The following charts are the only available from all possible MS charts:
+The following chart types are available:
 \itemize{
-\item barcharts: \code{\link[=ms_barchart]{ms_barchart()}}
+\item bar charts: \code{\link[=ms_barchart]{ms_barchart()}}
 \item line charts: \code{\link[=ms_linechart]{ms_linechart()}}
 \item scatter plots: \code{\link[=ms_scatterchart]{ms_scatterchart()}}
 \item area charts: \code{\link[=ms_areachart]{ms_areachart()}}
+\item pie and doughnut charts: \code{\link[=ms_piechart]{ms_piechart()}}
+\item bubble charts: \code{\link[=ms_bubblechart]{ms_bubblechart()}}
+\item radar (spider) charts: \code{\link[=ms_radarchart]{ms_radarchart()}}
+\item stock charts (HLC and OHLC): \code{\link[=ms_stockchart]{ms_stockchart()}}
 }
 
-These functions are creating a 'chart' object, it can be customized;
+Several chart types can be combined on a single chart, with an
+optional secondary axis, using \code{\link[=ms_chart_combine]{ms_chart_combine()}}.
+
+These functions create a 'chart' object that can be customized:
 \itemize{
 \item by using options specific to the chart (with \code{\link[=chart_settings]{chart_settings()}}),
 \item by changing the options related to the axes (with \code{\link[=chart_ax_x]{chart_ax_x()}} and \code{\link[=chart_ax_y]{chart_ax_y()}}),
@@ -48,6 +55,26 @@ These functions are creating a 'chart' object, it can be customized;
 You can add a chart into a slide in PowerPoint with function \code{\link[=ph_with.ms_chart]{ph_with.ms_chart()}}.
 
 You can add a chart into a Word document with function \code{\link[=body_add_chart]{body_add_chart()}}.
+
+You can add a chart into an Excel sheet with function \code{\link[=sheet_add_drawing.ms_chart]{sheet_add_drawing.ms_chart()}}.
+\subsection{Series styling properties by chart type}{
+
+Not all series styling properties have an effect on every
+chart type. The following table shows which properties are
+supported. A warning is emitted when a property is set on
+a chart type that does not support it.\tabular{lcccccccc}{
+   Property \tab bar \tab line \tab area \tab scatter \tab stock \tab radar \tab bubble \tab pie \cr
+   fill \tab x \tab x \tab x \tab x \tab x \tab x \tab x \tab x \cr
+   colour \tab x \tab x \tab x \tab x \tab x \tab x \tab x \tab x \cr
+   symbol \tab  \tab x \tab  \tab x \tab x \tab x \tab  \tab  \cr
+   size \tab  \tab x \tab  \tab x \tab x \tab x \tab  \tab  \cr
+   line_width \tab x \tab x \tab x \tab x \tab x \tab x \tab x \tab x \cr
+   line_style \tab  \tab x \tab  \tab x \tab x \tab x \tab  \tab  \cr
+   smooth \tab  \tab x \tab  \tab x \tab  \tab  \tab  \tab  \cr
+   labels_fp \tab x \tab x \tab x \tab x \tab  \tab x \tab  \tab x \cr
+}
+
+}
 }
 \seealso{
 \url{https://ardata-fr.github.io/officeverse/}
@@ -59,8 +86,8 @@ Other contributors:
 \itemize{
   \item ArData [copyright holder]
   \item YouGov [funder]
-  \item Jan Marvin Garbuszus (support for openxls2) [contributor]
-  \item Stefan Moog \email{moogs@gmx.de} (support to set chart and plot area color and border) [contributor]
+  \item Jan Marvin Garbuszus (support for openxlsx2 and combo charts) [contributor]
+  \item Stefan Moog \email{moogs@gmx.de} (support to set chart and plot area color and border, fix for line style none) [contributor]
   \item Eli Daniels \email{eli.daniels@ardata.fr} [contributor]
   \item Marlon Molina (added table feature) [contributor]
   \item Rokas Klydzia (custom labels) [contributor]
