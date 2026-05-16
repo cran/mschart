@@ -6,8 +6,9 @@ mschart R package
 [![R build
 status](https://github.com/ardata-fr/mschart/workflows/R-CMD-check/badge.svg)](https://github.com/ardata-fr/mschart/actions)
 [![version](https://www.r-pkg.org/badges/version/mschart)](https://CRAN.R-project.org/package=mschart)
-![cranlogs](https://cranlogs.r-pkg.org/badges/mschart)
-![Active](http://www.repostatus.org/badges/latest/active.svg)
+[![test
+coverage](https://codecov.io/gh/ardata-fr/mschart/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ardata-fr/mschart)
+![Active](https://www.repostatus.org/badges/latest/active.svg)
 
 The `mschart` package provides a framework for easily creating charts
 for ‘Microsoft PowerPoint’ presentations, ‘Microsoft Word’ documents and
@@ -17,6 +18,19 @@ charts in new or existing PowerPoint, Word or Excel files. With
 ‘Microsoft Charts’, the data is integrated into the document and linked
 to the chart. The result can be edited, annotated and resized. If the
 data is updated in the document, the chart is also updated.
+
+## Chart types
+
+Classical charts (Office 2007+): `ms_barchart()`, `ms_linechart()`,
+`ms_areachart()`, `ms_scatterchart()`, `ms_piechart()`,
+`ms_bubblechart()`, `ms_radarchart()`, `ms_stockchart()`.
+
+chartEx charts (Office 2016+): `ms_boxplotchart()`, `ms_funnelchart()`,
+`ms_histogramchart()`, `ms_paretochart()`, `ms_sunburstchart()`,
+`ms_treemapchart()`, `ms_waterfallchart()`.
+
+Classical charts can be combined on the same plot area with
+`ms_chart_combine()`.
 
 ## Example
 
@@ -73,9 +87,8 @@ wb <- sheet_add_drawing(wb, sheet = "sales", value = bars,
 print(wb, target = "example.xlsx")
 ```
 
-At any moment, you can type `print(your_chart, preview = TRUE)` to
-preview the chart in a temporary PowerPoint file. This requires a
-PowerPoint Viewer to be installed on the machine.
+Use `print(your_chart, preview = TRUE)` to open the chart in PowerPoint
+while iterating.
 
 ## Installation
 

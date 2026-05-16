@@ -24,7 +24,11 @@ associated with the chart.}
 \item{asis}{logical parameter defaulting to FALSE. When FALSE, the data is
 reshaped internally so that each series becomes a separate column. When TRUE,
 the data is used as-is and must already have one column for categories and
-one column per series.}
+one column per series, and \code{y} accepts a vector of series column names.
+\code{asis} describes the \emph{input shape} read by the constructor. Not to be
+confused with the \code{write_data} argument of \code{\link[=sheet_add_drawing.ms_chart]{sheet_add_drawing.ms_chart()}},
+which controls whether \code{mschart} writes the chart's data into an Excel
+sheet at embed time. The two are independent.}
 }
 \value{
 An \code{ms_chart} object.
@@ -62,14 +66,21 @@ chart_02 <- chart_settings(chart_02, scatterstyle = "marker")
 \code{\link[=chart_settings]{chart_settings()}}, \code{\link[=chart_ax_x]{chart_ax_x()}}, \code{\link[=chart_ax_y]{chart_ax_y()}},
 \code{\link[=chart_data_labels]{chart_data_labels()}}, \code{\link[=chart_theme]{chart_theme()}}, \code{\link[=chart_labels]{chart_labels()}}
 
-Other 'Office' chart objects: 
-\code{\link{ms_areachart}()},
-\code{\link{ms_barchart}()},
-\code{\link{ms_bubblechart}()},
-\code{\link{ms_chart_combine}()},
-\code{\link{ms_linechart}()},
-\code{\link{ms_piechart}()},
-\code{\link{ms_radarchart}()},
-\code{\link{ms_stockchart}()}
+Other 'Office' chart objects:
+\code{\link[=ms_areachart]{ms_areachart()}},
+\code{\link[=ms_barchart]{ms_barchart()}},
+\code{\link[=ms_boxplotchart]{ms_boxplotchart()}},
+\code{\link[=ms_bubblechart]{ms_bubblechart()}},
+\code{\link[=ms_chart_combine]{ms_chart_combine()}},
+\code{\link[=ms_funnelchart]{ms_funnelchart()}},
+\code{\link[=ms_histogramchart]{ms_histogramchart()}},
+\code{\link[=ms_linechart]{ms_linechart()}},
+\code{\link[=ms_paretochart]{ms_paretochart()}},
+\code{\link[=ms_piechart]{ms_piechart()}},
+\code{\link[=ms_radarchart]{ms_radarchart()}},
+\code{\link[=ms_stockchart]{ms_stockchart()}},
+\code{\link[=ms_sunburstchart]{ms_sunburstchart()}},
+\code{\link[=ms_treemapchart]{ms_treemapchart()}},
+\code{\link[=ms_waterfallchart]{ms_waterfallchart()}}
 }
 \concept{'Office' chart objects}

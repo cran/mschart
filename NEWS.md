@@ -1,4 +1,36 @@
-# mschart 0.4.2
+# mschart 0.5.0
+
+## Highlights
+
+* Seven new chart types built on Office's chartEx family (Office
+  2016+): box-and-whisker (`ms_boxplotchart()`), funnel
+  (`ms_funnelchart()`), histogram (`ms_histogramchart()`), pareto
+  (`ms_paretochart()`), sunburst (`ms_sunburstchart()`), treemap
+  (`ms_treemapchart()`) and waterfall (`ms_waterfallchart()`).
+
+* Place a chart on an Excel sheet anchored to cells. Pass
+  `anchor = "B2:H20"` to `sheet_add_drawing()` to anchor between two
+  cells (Excel's default "move and size with cells"), or
+  `anchor = "B2"` to anchor to a single cell (move only). Omit
+  `anchor` for absolute placement. `edit_as` controls what Excel does
+  when rows or columns are resized.
+
+## Bug fixes
+
+* Custom `num_fmt` strings containing XML metacharacters (e.g. the
+  `[>=1000]` conditional Excel format) no longer break chart XML
+  generation; they are escaped automatically (#98).
+* `ms_stockchart()` no longer fails when the `x` column is literally
+  named `group` (or `x_val` / `y_val`). Internal column names now use
+  a `.mschart_` prefix to avoid collisions with user data.
+* `ms_chart_combine()` supports independent x ranges via `secondary_x`
+  (top axis), in addition to the existing `secondary_y` mode.
+* `ms_chart_combine()` no longer produces files PowerPoint refuses to
+  open, and reports clear errors on incompatible inputs (column
+  collisions, x mismatches, unsupported axis combinations).
+
+
+# mschart 0.4.3
 
 ## Highlights
 

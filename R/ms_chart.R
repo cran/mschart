@@ -56,7 +56,11 @@ assert_pie <- function(data_x, data_y) {
 #' @param asis logical parameter defaulting to FALSE. When FALSE, the data is
 #' reshaped internally so that each series becomes a separate column. When TRUE,
 #' the data is used as-is and must already have one column for categories and
-#' one column per series.
+#' one column per series, and `y` accepts a vector of series column names.
+#' `asis` describes the *input shape* read by the constructor. Not to be
+#' confused with the `write_data` argument of [sheet_add_drawing.ms_chart()],
+#' which controls whether `mschart` writes the chart's data into an Excel
+#' sheet at embed time. The two are independent.
 #' @return An `ms_chart` object.
 #' @export
 #' @family 'Office' chart objects
@@ -293,25 +297,29 @@ ms_stockchart <- function(data, x, open = NULL, high, low, close) {
     series_names <- c(high, low, close)
   }
 
-  # reshape to long format with fixed series order
+  # reshape to long format with fixed series order; internal column
+  # names use the .mschart_ prefix to avoid collision with user data
+  # (e.g. an x column literally named "group").
   data_long <- data.frame(
-    x_val = rep(data[[x]], length(series_names)),
-    y_val = unlist(lapply(series_names, function(s) data[[s]]),
+    .mschart_x = rep(data[[x]], length(series_names)),
+    .mschart_y = unlist(
+      lapply(series_names, function(s) data[[s]]),
       use.names = FALSE
     ),
-    group = factor(
+    .mschart_group = factor(
       rep(series_names, each = nrow(data)),
       levels = series_names
     ),
-    stringsAsFactors = FALSE
+    stringsAsFactors = FALSE,
+    check.names = FALSE
   )
   names(data_long)[1] <- x
 
   out <- ms_chart(
     data = data_long,
     x = x,
-    y = "y_val",
-    group = "group",
+    y = ".mschart_y",
+    group = ".mschart_group",
     type = "stockplot"
   )
   out$stock_cols <- if (has_open) {
@@ -355,13 +363,21 @@ ms_stockchart <- function(data, x, open = NULL, high, low, close) {
 #' )
 #' radar
 ms_radarchart <- function(
-  data, x, y, group = NULL,
-  labels = NULL, asis = FALSE
+  data,
+  x,
+  y,
+  group = NULL,
+  labels = NULL,
+  asis = FALSE
 ) {
   out <- ms_chart(
-    data = data, x = x, y = y,
-    group = group, labels = labels,
-    type = "radarplot", asis = asis
+    data = data,
+    x = x,
+    y = y,
+    group = group,
+    labels = labels,
+    type = "radarplot",
+    asis = asis
   )
   out$axis_x_xml <- axis_content_xml_radar
   out$axis_y_xml <- axis_content_xml_radar
@@ -467,7 +483,8 @@ ms_chart_combine <- function(..., secondary_y = NULL, secondary_x = NULL) {
   for (i in seq_along(inputs)) {
     if (!inherits(inputs[[i]], "ms_chart")) {
       stop(
-        "Argument ", shQuote(names(inputs)[i]),
+        "Argument ",
+        shQuote(names(inputs)[i]),
         " is not an ms_chart object.",
         call. = FALSE
       )
@@ -487,6 +504,40 @@ ms_chart_combine <- function(..., secondary_y = NULL, secondary_x = NULL) {
     stop(
       "secondary_x names not found: ",
       paste(shQuote(bad_x), collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  both <- intersect(secondary_x, secondary_y)
+  if (length(both)) {
+    stop(
+      "Chart(s) ",
+      paste(shQuote(both), collapse = ", "),
+      " cannot be on both secondary_x and secondary_y; ",
+      "this combination is not supported.",
+      call. = FALSE
+    )
+  }
+  if (length(secondary_y) > 1L) {
+    stop("Only one chart can be placed on secondary_y.", call. = FALSE)
+  }
+  if (length(secondary_x) > 1L) {
+    stop("Only one chart can be placed on secondary_x.", call. = FALSE)
+  }
+  if (length(secondary_y) > 0L && length(secondary_x) > 0L) {
+    stop(
+      "Combining secondary_y and secondary_x in the same chart is not ",
+      "supported: Office charts use at most two axes (one secondary ",
+      "y or one secondary x).",
+      call. = FALSE
+    )
+  }
+  primary_nm <- names(inputs)[1]
+  if (primary_nm %in% c(secondary_y, secondary_x)) {
+    stop(
+      "The primary chart ",
+      shQuote(primary_nm),
+      " cannot be referenced in secondary_y or secondary_x.",
       call. = FALSE
     )
   }
@@ -539,6 +590,126 @@ ms_chart_combine <- function(..., secondary_y = NULL, secondary_x = NULL) {
     chart_i$labels$title <- list(title = NULL, x = xlab, y = ylab)
 
     out$secondary <- append(out$secondary, list(chart_i))
+  }
+
+  # Build the embedded sheet that backs all sub-charts.
+  #
+  # Two regimes coexist:
+  #
+  # * shared_x: secondary uses the same x column name as the primary.
+  #   Charts share one x column; we merge by x and validate identical
+  #   x values. This is the historical case (secondary_y on shared
+  #   categories).
+  #
+  # * independent_x: secondary uses a different x column name. Each
+  #   chart keeps its own x column in the embedded sheet, and rows are
+  #   aligned by position with NA padding when lengths differ. Used
+  #   when a chart is placed on the secondary x axis with its own
+  #   range (e.g. two scatter clouds with disjoint x scales).
+  primary_x <- out$x
+  primary_ds <- out$data_series
+  existing_cols <- names(primary_ds)
+  combined_ds <- primary_ds
+
+  pad_to <- function(df, n) {
+    if (nrow(df) >= n) {
+      return(df)
+    }
+    extra <- df[rep(NA_integer_, n - nrow(df)), , drop = FALSE]
+    rbind(df, extra)
+  }
+
+  for (i in seq_along(out$secondary)) {
+    sec <- out$secondary[[i]]
+    sec_nm <- names(inputs)[i + 1L]
+
+    shared_x <- identical(sec$x, primary_x)
+    sec_y <- setdiff(names(sec$data_series), sec$x)
+
+    collision <- intersect(sec_y, existing_cols)
+    if (length(collision)) {
+      stop(
+        "Combined charts use the same column name(s) for different series: ",
+        paste(shQuote(collision), collapse = ", "),
+        ". Each series needs a distinct column in the embedded sheet; ",
+        "duplicate or rename the column in one of the charts before combining.",
+        call. = FALSE
+      )
+    }
+
+    if (shared_x) {
+      px <- combined_ds[[primary_x]]
+      sx <- sec$data_series[[primary_x]]
+      if (length(px) != length(sx) || !setequal(px, sx)) {
+        stop(
+          "Combined charts sharing an x column must share the same x values. ",
+          "Chart ",
+          shQuote(sec_nm),
+          " has different x values from the primary chart.",
+          call. = FALSE
+        )
+      }
+      combined_ds <- merge(
+        combined_ds,
+        sec$data_series,
+        by = primary_x,
+        sort = FALSE
+      )
+      existing_cols <- c(existing_cols, sec_y)
+    } else {
+      # independent x: cbind with NA padding to align row counts.
+      if (
+        inherits(combined_ds, "wb_data") ||
+          inherits(sec$data_series, "wb_data")
+      ) {
+        stop(
+          "Combining charts with independent x columns is not supported ",
+          "when the data is a 'wb_data' object (asis mode). ",
+          "Use the same x column name across charts in this mode.",
+          call. = FALSE
+        )
+      }
+      x_collision <- sec$x %in% existing_cols
+      if (x_collision) {
+        stop(
+          "Chart ",
+          shQuote(sec_nm),
+          " uses x column ",
+          shQuote(sec$x),
+          " which collides with an existing column in the embedded sheet. ",
+          "Rename the x column in one of the charts before combining.",
+          call. = FALSE
+        )
+      }
+      n <- max(nrow(combined_ds), nrow(sec$data_series))
+      combined_ds <- cbind(
+        pad_to(combined_ds, n),
+        pad_to(sec$data_series, n)
+      )
+      existing_cols <- c(existing_cols, sec$x, sec_y)
+    }
+  }
+
+  # preserve primary's row order (merge may reorder)
+  m <- match(primary_ds[[primary_x]], combined_ds[[primary_x]])
+  m <- m[!is.na(m)]
+  if (length(m) == nrow(combined_ds)) {
+    combined_ds <- combined_ds[m, , drop = FALSE]
+  } else {
+    # independent_x path may have padded the primary x with NAs;
+    # keep the natural order from the cbind above.
+    combined_ds <- combined_ds[
+      c(m, setdiff(seq_len(nrow(combined_ds)), m)),
+      ,
+      drop = FALSE
+    ]
+  }
+  rownames(combined_ds) <- NULL
+
+  # propagate to all charts so as_series() resolves correct positions
+  out$data_series <- combined_ds
+  for (i in seq_along(out$secondary)) {
+    out$secondary[[i]]$data_series <- combined_ds
   }
 
   out
@@ -665,7 +836,7 @@ ms_chart <- function(
   }
   if (!is.null(labels)) {
     labs <- labels[!labels %in% names(data)]
-    if (!(all(labs))) {
+    if (length(labs)) {
       stop(
         "column(s) ",
         paste(shQuote(labs), collapse = ", "),
@@ -1002,7 +1173,7 @@ format.ms_chart <- function(
   axis_str <- paste0(x_axis_str, y_axis_str)
 
   if (length(x$secondary)) {
-    ser_id <- length(x$yvar) + 1L
+    ser_id <- length(get_series_names(x)) + 1L
 
     for (sec in seq_along(x$secondary)) {
       is_sec_x <- isTRUE(attr(x$secondary[[sec]], "secondary_x"))
@@ -1040,7 +1211,7 @@ format.ms_chart <- function(
           rot = x$secondary[[sec]]$theme$title_y_rot
         )
 
-        x_axis_str <- sprintf(
+        sec_y_xml <- sprintf(
           "<%s>%s</%s>",
           x$secondary[[sec]]$axis_tag$y,
           axis_l_str,
@@ -1055,7 +1226,7 @@ format.ms_chart <- function(
           is_x = TRUE,
           lab = xlab
         )
-        y_axis_str <- sprintf(
+        sec_x_xml <- sprintf(
           "<%s>%s</%s>",
           x$secondary[[sec]]$axis_tag$x,
           axis_r_str,
@@ -1064,7 +1235,7 @@ format.ms_chart <- function(
 
         secondary <- FALSE
 
-        axis_str <- paste0(axis_str, x_axis_str, y_axis_str)
+        axis_str <- paste0(axis_str, sec_y_xml, sec_x_xml)
       }
 
       # all secondary charts
@@ -1079,7 +1250,7 @@ format.ms_chart <- function(
         )
       )
 
-      ser_id <- ser_id + length(x$secondary[[sec]]$yvar)
+      ser_id <- ser_id + length(get_series_names(x$secondary[[sec]]))
     }
   }
 
@@ -1143,7 +1314,9 @@ format.ms_chart <- function(
         "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""
       )
       manual <- paste0(
-        "<c:layout ", ns_layout, "><c:manualLayout>",
+        "<c:layout ",
+        ns_layout,
+        "><c:manualLayout>",
         "<c:xMode val=\"edge\"/>",
         "<c:yMode val=\"edge\"/>",
         if (!is.null(lx)) sprintf("<c:x val=\"%g\"/>", lx),
