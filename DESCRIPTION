@@ -2,7 +2,7 @@ Type: Package
 Package: mschart
 Title: Chart Generation for 'Microsoft Word', 'Microsoft Excel' and
         'Microsoft PowerPoint' Documents
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: c(
     person("David", "Gohel", , "david.gohel@ardata.fr", role = c("aut", "cre")),
     person("ArData", role = "cph"),
@@ -41,7 +41,7 @@ Encoding: UTF-8
 LazyData: true
 Config/roxygen2/version: 8.0.0
 NeedsCompilation: no
-Packaged: 2026-05-16 15:18:39 UTC; davidgohel
+Packaged: 2026-07-20 14:18:38 UTC; davidgohel
 Author: David Gohel [aut, cre],
   ArData [cph],
   YouGov [fnd],
@@ -55,4 +55,4 @@ Author: David Gohel [aut, cre],
   Dan Joplin [ctb] (fix scatter plot data structure)
 Maintainer: David Gohel <david.gohel@ardata.fr>
 Repository: CRAN
-Date/Publication: 2026-05-16 21:50:37 UTC
+Date/Publication: 2026-07-20 14:50:02 UTC

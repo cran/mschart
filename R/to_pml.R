@@ -78,7 +78,7 @@ to_pml.ms_barchart <- function(
   x_ax_id <- sprintf("<c:axId val=\"%s\"/>", id_x)
   y_ax_id <- sprintf("<c:axId val=\"%s\"/>", id_y)
 
-  dir_ <- structure(c("bar", "col"), .Names = c("horizontal", "vertical"))
+  dir_ <- structure(c("bar", "col"), names = c("horizontal", "vertical"))
   dir_ <- dir_[x$options$dir]
 
   paste0(

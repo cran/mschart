@@ -83,7 +83,6 @@ barchart_options <- function(
   overlap = 0,
   table = FALSE
 ) {
-  # bardir <- structure(c("bar", "col"), .Names = c("horizontal", "vertical"))
   bardir <- c("horizontal", "vertical")
   if (!dir %in% bardir) {
     stop("dir should be one of ", paste0(shQuote(bardir), collapse = ", "))

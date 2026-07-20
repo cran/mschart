@@ -1,4 +1,4 @@
-3b2189f1a44c0e3eb2864ef8ed1762d9 *DESCRIPTION
+949796892f690f42f0fa46de27100930 *DESCRIPTION
 19fcbe5fc9c6d725493363da8b67c2fd *LICENSE
 04e7ec5f17e2d33210abc70855ae6f2d *NAMESPACE
 54f940f904bfa66f986f70b5e733d4bf *NEWS.md
@@ -9,7 +9,7 @@ bb50c6d35aebb79492e4ce13bb497989 *R/axis_codes.R
 f30bc02a877cf8b60777d41ad4fd7181 *R/chart_data_labels.R
 0537d3675b03ad24ca9bcb5a72702fbc *R/chart_data_styles.R
 bfa7a6ccce46e2497074de9f10bab998 *R/chart_labels.R
-e73e484317f6d6556abda4895d459a65 *R/chart_settings.R
+719249646e05109417f4a3174e3c3b79 *R/chart_settings.R
 6aef23078156d14b35d35cf8734fa657 *R/cx_helpers.R
 ea46bff33576b0bc9628296f499050bf *R/datasets.R
 fd6e02b07d8514d584f2adadb0d54a33 *R/excel_series.R
@@ -32,7 +32,7 @@ edeabcfc43cc93d8fc62551223a0d54f *R/series.R
 2102f21e5bab182bed2902ffdeb23b4f *R/table_setting.R
 c8bfae03521a1422c26486c5e2db1738 *R/theme.R
 94d9036e2c643d3db7261c6be21e099b *R/themes.R
-d149c5d9c99e9e2cbb74dbc9563dedfa *R/to_pml.R
+d42f9b51e26c6ac10f69a5635a6bce28 *R/to_pml.R
 3839b702ac6e77385788a954e284b376 *R/utils.R
 df34e0e2af219d063a1483c51606928d *R/xlsx_add_chart.R
 4c68441301e5c86f57c3be32ba8434dd *README.md
